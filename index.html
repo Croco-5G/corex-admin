@@ -2748,8 +2748,28 @@ let myProfitChart = null;
 let mySalesChart = null;
 let currentUser = null;
 let _fbAuthReady = false;
-function _doAfterFbAuth(callback) {
-  if (_fbAuthReady) { callback(); return; }
+let _fbAuthInFlight = false;
+let _fbBgRetryTimer = null;
+let _fbAuthQueue = [];
+
+// تفريغ المهام المنتظِرة بعد نجاح المصادقة
+function _fbRunAuthQueue() {
+  const q = _fbAuthQueue; _fbAuthQueue = [];
+  q.forEach(cb => { try { if (cb) cb(); } catch(e){} });
+}
+
+// تمييز فشل الشبكة (نُعيد المحاولة) عن الباسورد الخاطئ (نطلب الإدخال)
+function _fbIsNetworkError(e) {
+  const code = (e && e.code) || '';
+  return code === 'auth/network-request-failed' ||
+         code === 'auth/internal-error' ||
+         code === 'auth/timeout' ||
+         (typeof navigator !== 'undefined' && navigator.onLine === false);
+}
+
+// إظهار واجهة إدخال الباسورد (مرة واحدة فقط)
+function _showFbAuthModal() {
+  if (document.getElementById('_fbAuthModal')) return;
   const modal = document.createElement('div');
   modal.id = '_fbAuthModal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:99999;display:flex;align-items:center;justify-content:center;';
@@ -2761,30 +2781,75 @@ function _doAfterFbAuth(callback) {
       <button id="_fbAuthBtn" onclick="_submitFbAuth('${`ahmed2037mohamed@gmail.com`}')" style="width:100%;padding:10px;border-radius:8px;background:var(--primary,#a78bfa);color:white;font-weight:700;border:none;cursor:pointer;font-size:14px;">دخول</button>
     </div>`;
   document.body.appendChild(modal);
-  document.getElementById('_fbAuthPass').addEventListener('keydown', e => { if(e.key === 'Enter') _submitFbAuth('ahmed2037mohamed@gmail.com'); });
-  const saved = localStorage.getItem('_fbAuthPass');
-  if (saved) {
-    authOrder.signInWithEmailAndPassword('ahmed2037mohamed@gmail.com', saved)
-      .then(() => { _fbAuthReady = true; document.getElementById('_fbAuthModal')?.remove(); callback(); })
-      .catch(() => { localStorage.removeItem('_fbAuthPass'); document.getElementById('_fbAuthPass').value = ''; });
+  const inp = document.getElementById('_fbAuthPass');
+  if (inp) {
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter') _submitFbAuth('ahmed2037mohamed@gmail.com'); });
+    try { inp.focus(); } catch(e){}
   }
-  window._fbAuthCallback = callback;
 }
+
+// محاولة المصادقة في الخلفية بالباسورد المحفوظ
+function _tryBgFbAuth() {
+  if (_fbAuthReady || _fbAuthInFlight || _fbBgRetryTimer) return;
+  const saved = localStorage.getItem('_fbAuthPass');
+  if (!saved) { _showFbAuthModal(); return; }   // لا يوجد باسورد محفوظ → اطلب الإدخال
+  _fbAuthInFlight = true;
+  authOrder.signInWithEmailAndPassword('ahmed2037mohamed@gmail.com', saved)
+    .then(() => {
+      _fbAuthInFlight = false;
+      _fbAuthReady = true;
+      if (_fbBgRetryTimer) { clearTimeout(_fbBgRetryTimer); _fbBgRetryTimer = null; }
+      document.getElementById('_fbAuthModal')?.remove();
+      _fbRunAuthQueue();
+    })
+    .catch(err => {
+      _fbAuthInFlight = false;
+      if (_fbIsNetworkError(err)) {
+        // فشل بسبب النت فقط → استمر بالمحاولة في الخلفية بهدوء دون إظهار الواجهة
+        if (_fbBgRetryTimer) clearTimeout(_fbBgRetryTimer);
+        _fbBgRetryTimer = setTimeout(() => { _fbBgRetryTimer = null; _tryBgFbAuth(); }, 5000);
+      } else {
+        // الباسورد فعلاً خاطئ → احذفه وأظهر واجهة الإدخال
+        localStorage.removeItem('_fbAuthPass');
+        _showFbAuthModal();
+      }
+    });
+}
+
+function _doAfterFbAuth(callback) {
+  if (_fbAuthReady) { if (callback) callback(); return; }
+  if (callback) _fbAuthQueue.push(callback);
+  _tryBgFbAuth();
+}
+
+// عند عودة الإنترنت أثناء انتظار المحاولة الخلفية → أعد المحاولة فوراً
+window.addEventListener('online', () => {
+  if (!_fbAuthReady && !document.getElementById('_fbAuthModal')) {
+    if (_fbBgRetryTimer) { clearTimeout(_fbBgRetryTimer); _fbBgRetryTimer = null; }
+    _tryBgFbAuth();
+  }
+});
 
 async function _submitFbAuth(email) {
   const pass = document.getElementById('_fbAuthPass').value;
   const btn = document.getElementById('_fbAuthBtn');
   const err = document.getElementById('_fbAuthErr');
   if (!pass) { err.textContent = 'أدخل الباسورد'; err.style.display = 'block'; return; }
-  btn.textContent = '...'; btn.disabled = true;
+  btn.textContent = '...'; btn.disabled = true; err.style.display = 'none';
   try {
     await authOrder.signInWithEmailAndPassword(email, pass);
     _fbAuthReady = true;
+    _fbAuthInFlight = false;
+    if (_fbBgRetryTimer) { clearTimeout(_fbBgRetryTimer); _fbBgRetryTimer = null; }
     localStorage.setItem('_fbAuthPass', pass);
     document.getElementById('_fbAuthModal')?.remove();
-    if (window._fbAuthCallback) { window._fbAuthCallback(); window._fbAuthCallback = null; }
+    _fbRunAuthQueue();
   } catch(e) {
-    err.textContent = 'باسورد خاطئ';
+    if (_fbIsNetworkError(e)) {
+      err.textContent = 'تعذّر الاتصال — تحقق من الإنترنت وحاول مجدداً';
+    } else {
+      err.textContent = 'باسورد خاطئ';
+    }
     err.style.display = 'block';
     btn.textContent = 'دخول'; btn.disabled = false;
   }
