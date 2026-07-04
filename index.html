@@ -447,6 +447,14 @@
             #investment > div[style*="grid-template-columns: 1fr 1fr"] {
                 grid-template-columns: 1fr !important;
             }
+
+            /* ── تحسينات الجوال لشرائح العمولة وبطاقة الراتب الشهرية ── */
+            .emp-tier-row { padding: 12px !important; }
+            .emp-tier-row input { font-size: 16px !important; } /* يمنع تقريب iOS التلقائي */
+            #empBonusMonthCard input, #empBonusAdminBox input { font-size: 16px !important; }
+            /* أزرار التنقل بين الأشهر أكبر قليلاً للمس المريح */
+            #empBonusPrevBtn, #empBonusNextBtn { width: 46px !important; height: 46px !important; }
+            #empBonusMonthValue { font-size: 24px !important; }
         }
 
         /* --- OTHER COMPONENTS --- */
@@ -938,6 +946,73 @@
         @keyframes chatBubbleFlash { 0%,100% { box-shadow:0 0 0 0 rgba(99,102,241,0); } 30% { box-shadow:0 0 0 4px rgba(99,102,241,0.55); } }
         .chat-bubble.chat-bubble-flash { animation:chatBubbleFlash 0.6s ease 3; }
 
+        /* ── TG countdown central overlay ── */
+        #tgCountdownOverlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 99998;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+            animation: tgOverlayIn 0.25s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes tgOverlayIn {
+            from { opacity:0; transform:translate(-50%,-50%) scale(0.75); }
+            to   { opacity:1; transform:translate(-50%,-50%) scale(1); }
+        }
+        #tgCountdownRingWrap {
+            position: relative;
+            width: 96px;
+            height: 96px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15,23,42,0.72);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 50%;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+        }
+        #tgCountdownRingWrap svg {
+            position: absolute;
+            top: 0; left: 0;
+            transform: rotate(-90deg);
+        }
+        #tgCountdownNum {
+            font-size: 30px;
+            font-weight: 900;
+            color: #fff;
+            font-family: 'Tajawal', sans-serif;
+            position: relative;
+            z-index: 1;
+            line-height: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+            transition: opacity 0.2s;
+        }
+        #tgCountdownLbl {
+            font-size: 12.5px;
+            color: rgba(255,255,255,0.92);
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            background: rgba(15,23,42,0.78);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 5px 16px;
+            border-radius: 20px;
+            white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
+        }
+        #tgCountdownQueueLbl {
+            font-size: 11px;
+            color: rgba(255,255,255,0.55);
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 600;
+            display: none;
+        }
 
         /* Swipe-to-reply indicator (mobile) */
         .chat-msg-wrap { will-change:transform; position:relative; }
@@ -1079,7 +1154,7 @@
 
 <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-<div id="customConfirmDialog" class="dialog-modal" style="display:none; z-index:6000;">
+<div id="customConfirmDialog" class="dialog-modal" style="display:none; z-index:9500;">
     <div class="dialog-box">
         <div id="cdIcon" class="dialog-icon"></div>
         <h3 id="cdTitle" style="font-size:18px; margin-top:0;"></h3>
@@ -1092,7 +1167,7 @@
     </div>
 </div>
 
-<div id="customPromptDialog" class="dialog-modal" style="display:none; z-index:6000;">
+<div id="customPromptDialog" class="dialog-modal" style="display:none; z-index:9500;">
     <div class="dialog-box">
         <div id="pdIcon" class="dialog-icon"></div>
         <h3 id="pdTitle" style="font-size:18px; margin-top:0;"></h3>
@@ -1575,7 +1650,7 @@
         <button onclick="showPage('security', this)" id="btnSecurity" class="hidden"><i class="fas fa-users-cog"></i> المستخدمين</button>
         <button onclick="showPage('logs', this)" id="btnLogs" class="hidden"><i class="fas fa-clipboard-list"></i> سجل النشاط</button>
         <button onclick="showPage('backup', this)" id="btnBackup"><i class="fas fa-database"></i> نسخ احتياطي</button>
-        <button onclick="showPage('teamChat', this)" id="btnTeamChat" style=""><i class="fas fa-comments"></i> الدردشة <span id="chatUnreadBadge" style="background:var(--danger); color:white; padding:2px 7px; border-radius:10px; font-size:10px; display:none; margin-right:4px; font-weight:800;"></span></button>
+        <button onclick="showPage('teamChat', this)" id="btnTeamChat"><i class="fas fa-comments"></i> الدردشة <span id="chatUnreadBadge" style="background:var(--danger); color:white; padding:2px 7px; border-radius:10px; font-size:10px; display:none; margin-right:4px; font-weight:800;"></span></button>
         <button onclick="showPage('modify', this)" id="btnSettings"><i class="fas fa-cog"></i> الإعدادات</button>
         <button onclick="logout()" style="color:var(--danger); margin-top:10px"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
     </div>
@@ -1618,12 +1693,25 @@
         </div>
         <div class="grid-2">
             <div class="input-group"><label>رقم جوال العميل (اختياري)</label><input id="customerPhone" placeholder="97xxxxxxxxxx أو +97xxxxxxxxxx" oninput="validatePhoneInput(this)" onblur="autoAddPlusPhone(this)" dir="ltr" style="text-align:right;"></div>
-            <div class="input-group"><label>المبلغ المدفوع من العميل</label><div style="display:flex; gap:10px"><input type="number" id="paidAmount" placeholder="0.00" style="flex: 1;"><select id="paidCurrency" style="width:110px; flex-shrink: 0;"><option value="₪">₪ شيكل</option><option value="$">$ دولار</option></select></div></div>
+            <div class="input-group"><label>المبلغ المدفوع من العميل</label><div style="display:flex; gap:10px"><input type="number" id="paidAmount" placeholder="0.00" style="flex: 1;"><select id="paidCurrency" style="width:150px; flex-shrink: 0; text-align:center;"><option value="">اختر العملة</option><option value="₪">₪ شيكل</option><option value="$">$ دولار</option></select></div></div>
         </div>
-        <div class="input-group" style="margin-top:0;">
+        <div class="input-group" id="purchaseProfilesGroup" style="margin-top:0; display:none;">
             <label>عدد البروفايلات (الذي يأخذه هذا العميل)</label>
-            <input type="number" id="purchaseProfilesCount" min="1" step="1" value="0" placeholder="0" oninput="_clampPurchaseProfilesCount()">
-            <div id="purchaseProfilesHint" style="font-size:12px; color:var(--text-muted); margin-top:6px;"><i class="fas fa-circle-info"></i> اختر اشتراكاً أولاً لمعرفة الحد الأقصى المتاح، ثم أدخل عدد البروفايلات (1 أو أكثر)</div>
+            <input type="hidden" id="purchaseProfilesCount" value="1">
+            <div style="display:flex; align-items:center; gap:14px; margin-top:4px;">
+                <button type="button" id="btnDecProfiles"
+                    onclick="_stepPurchaseProfiles(-1)"
+                    style="width:46px; height:46px; border-radius:12px; border:2px solid var(--border-color); background:var(--bg-card); color:var(--danger); font-size:22px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; flex-shrink:0;"
+                    onmouseover="this.style.background='var(--danger)';this.style.color='#fff';this.style.borderColor='var(--danger)';"
+                    onmouseout="this.style.background='var(--bg-card)';this.style.color='var(--danger)';this.style.borderColor='var(--border-color)';">−</button>
+                <span id="purchaseProfilesDisplay" style="font-size:26px; font-weight:900; min-width:40px; text-align:center; color:var(--primary);">1</span>
+                <button type="button" id="btnIncProfiles"
+                    onclick="_stepPurchaseProfiles(1)"
+                    style="width:46px; height:46px; border-radius:12px; border:2px solid var(--border-color); background:var(--bg-card); color:var(--success); font-size:22px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; flex-shrink:0;"
+                    onmouseover="this.style.background='var(--success)';this.style.color='#fff';this.style.borderColor='var(--success)';"
+                    onmouseout="this.style.background='var(--bg-card)';this.style.color='var(--success)';this.style.borderColor='var(--border-color)';">+</button>
+                <div id="purchaseProfilesHint" style="font-size:12px; color:var(--text-muted);"><i class="fas fa-circle-info"></i> الحد الأقصى المتاح: <b id="purchaseProfilesMax">1</b> بروفايل</div>
+            </div>
         </div>
         
         <div class="grid-2" style="margin-top:10px; padding-top:20px; border-top:1px dashed var(--border-color)">
@@ -2039,24 +2127,36 @@
     <div id="investment" class="card hidden">
         <h3><i class="fas fa-money-bill-wave" style="color:var(--primary)"></i> سحب أموال</h3>
 
-        <!-- زيادة راتب الموظف - للأدمن فقط -->
-        <div id="empBonusAdminBox" class="inner-box hidden" style="max-width:500px; margin:0 auto 24px auto; border:2px solid rgba(234,179,8,0.4);">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-                <div style="width:38px; height:38px; border-radius:12px; background:rgba(234,179,8,0.15); display:flex; align-items:center; justify-content:center; color:#eab308; font-size:17px;"><i class="fas fa-coins"></i></div>
-                <div>
-                    <div style="font-size:13px; color:var(--text-muted); font-weight:700;">زيادة راتب الموظف — هذا الشهر</div>
-                    <div id="empBonusAdminValue" style="font-size:22px; font-weight:900; color:#eab308;">0 ₪</div>
-                </div>
+        <!-- بطاقة زيادة راتب الموظف الشهرية (مع التنقل بين الشهور) - للأدمن فقط -->
+        <div id="empBonusMonthCard" class="inner-box hidden" style="max-width:500px; margin:0 auto 16px auto; border:2px solid rgba(234,179,8,0.45); background:linear-gradient(135deg, rgba(234,179,8,0.06), rgba(234,179,8,0.02));">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+                <div style="width:40px; height:40px; border-radius:12px; background:rgba(234,179,8,0.18); display:flex; align-items:center; justify-content:center; color:#eab308; font-size:18px;"><i class="fas fa-coins"></i></div>
+                <div style="font-size:14px; color:var(--text-main); font-weight:800;">زيادة راتب الموظف</div>
             </div>
-            <div style="border-top:1px dashed var(--border-color); padding-top:14px;">
-                <label style="font-size:13px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:8px;">تعديل الزيادة (زيادة أو خصم)</label>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <button id="empBonusPrevBtn" onclick="empBonusNavMonth(-1)" title="الشهر السابق" style="width:42px; height:42px; flex-shrink:0; border:none; border-radius:12px; background:rgba(234,179,8,0.15); color:#eab308; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;"><i class="fas fa-chevron-right"></i></button>
+                <div style="flex:1; text-align:center;">
+                    <div id="empBonusMonthLabel" style="font-size:13px; color:var(--text-muted); font-weight:700; margin-bottom:4px;">—</div>
+                    <div id="empBonusMonthValue" style="font-size:26px; font-weight:900; color:#eab308; line-height:1.2;">0 ₪</div>
+                </div>
+                <button id="empBonusNextBtn" onclick="empBonusNavMonth(1)" title="الشهر التالي" style="width:42px; height:42px; flex-shrink:0; border:none; border-radius:12px; background:rgba(234,179,8,0.15); color:#eab308; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;"><i class="fas fa-chevron-left"></i></button>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:12px; text-align:center;">استخدم الأسهم للتنقل بين الشهور (تظهر الشهور التي فيها زيادة فقط)</div>
+        </div>
+
+        <!-- تعديل زيادة الراتب اليدوي - للأدمن فقط -->
+        <div id="empBonusAdminBox" class="inner-box hidden" style="max-width:500px; margin:0 auto 24px auto; border:2px solid rgba(234,179,8,0.4);">
+            <div style="border-top:0; padding-top:0;">
+                <label style="font-size:13px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:8px;"><i class="fas fa-edit" style="color:#eab308;"></i> تعديل يدوي للزيادة (للشهر المعروض أعلاه)</label>
                 <div style="display:flex; gap:8px; align-items:center;">
                     <input type="number" id="empBonusAdjust" placeholder="مثال: 10 أو -5" step="0.01" style="flex:1;">
                     <span style="font-weight:800; color:var(--text-muted);">₪</span>
-                    <button class="btn btn-warning" style="white-space:nowrap;" onclick="adjustEmployeeBonus()"><i class="fas fa-edit"></i> تطبيق</button>
+                    <button class="btn btn-warning" style="white-space:nowrap;" onclick="adjustEmployeeBonus()"><i class="fas fa-check"></i> تطبيق</button>
                 </div>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">أدخل رقم موجب للزيادة أو سالب للخصم</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">أدخل رقم موجب للزيادة أو سالب للخصم — يُطبَّق على الشهر الظاهر في البطاقة</div>
             </div>
+            <!-- عنصر مخفي للحفاظ على التوافق مع الكود القديم -->
+            <div id="empBonusAdminValue" style="display:none;">0 ₪</div>
         </div>
 
         <div class="inner-box" style="max-width:500px; margin:0 auto;">
@@ -2215,14 +2315,6 @@
             </div>
         </div>
 
-        <div id="sec-budget-reset" style="margin-bottom:20px; margin-top:20px;">
-            <h3><i class="fas fa-chart-line" style="color:var(--primary)"></i> إعادة تعيين مسار الميزانية</h3>
-            <div class="inner-box" style="border-style:dashed!important;">
-                <p style="color:var(--text-muted); font-size:13px; margin-top:0; line-height:1.7;">يجعل هذا الزر الرصيدَ الحالي نقطةَ بداية الشهر في منحنى الميزانية، وكأنه لم تجرِ أي عمليات في هذا الشهر. <b>لا يؤثر على الأرصدة أو السجلات المالية.</b></p>
-                <button class="btn" style="background:transparent; border:1px solid var(--danger); color:var(--danger);" onclick="resetBudgetMonth()"><i class="fas fa-undo"></i> إعادة تعيين بداية الشهر الحالي</button>
-            </div>
-        </div>
-
         <hr class="editor-only" style="margin: 40px 0; border: 0; border-top: 2px dashed var(--border-color);">
 
         <hr class="admin-only" style="margin: 40px 0; border: 0; border-top: 2px dashed var(--border-color);">
@@ -2306,16 +2398,6 @@
         </div>
 
         <!-- اختبار التخزين — للادمن فقط -->
-        <div id="sec-storage-test" class="hidden" style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 25px; margin-bottom: 40px;">
-            <h3 style="color: var(--text-main); margin-top:0;"><i class="fas fa-vial" style="color:var(--danger)"></i> اختبار التخزين</h3>
-            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">يضيف بيانات وهمية بسجل النشاط باستمرار لاختبار حساب المساحة — اضغط "إيقاف وحذف" لإزالتها نهائياً من Firebase.</p>
-            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-                <button id="btnToggleStressTest" onclick="toggleStorageTest()" class="btn btn-danger" style="display:flex; align-items:center; gap:8px;">
-                    <i class="fas fa-play"></i> بدء الرفع
-                </button>
-                <span id="stressTestStatus" style="font-size:13px; color:var(--text-muted);"></span>
-            </div>
-        </div>
         <div id="demo-mode-section" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; padding: 25px; border-radius: var(--radius-lg); margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
@@ -2348,7 +2430,66 @@
             </div>
         </div>
 
+        <div id="tg-notif-setting" style="display:none; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px 25px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:40px; height:40px; background:linear-gradient(135deg,rgba(34,158,217,0.18),rgba(59,130,246,0.15)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; color:#229ED9; flex-shrink:0; border:1px solid rgba(34,158,217,0.25);">
+                        <i class="fab fa-telegram-plane"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:700; font-size:15px; color:var(--text-main);">إشعارات تلغرام</div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">عند التفعيل يصلك إشعار على تلغرام عندما يرسل أحد رسالة في الدردشة. <b>خاص بك أنت فقط.</b></div>
+                    </div>
+                </div>
+                <label class="theme-switch" style="width: 60px; height: 30px; flex-shrink:0;">
+                    <input type="checkbox" id="tgNotifToggle" onchange="toggleTelegramNotif()">
+                    <span class="slider"></span>
+                </label>
+            </div>
 
+            <div id="tgNotifOptions" style="display:none; margin-top:18px; padding-top:18px; border-top:1px dashed var(--border-color);">
+                <div style="font-size:12px; color:var(--text-muted); line-height:1.8; margin-bottom:14px; padding:10px; background:rgba(34,158,217,0.08); border-radius:8px; border-right:3px solid #229ED9;">
+                    <i class="fas fa-info-circle" style="color:#229ED9;"></i> عند وصول رسالة جديدة وعدم قراءتها خلال 4 ثواني، سيرسل البوت إشعاراً فورياً لحسابك على تيليغرام.
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:12px; padding:12px 14px; margin-bottom:14px;">
+                    <div>
+                        <div style="font-weight:700; font-size:13px; color:var(--text-main);"><i class="fas fa-eye" style="color:var(--accent);"></i> إظهار محتوى الرسالة</div>
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">يظهر نص الرسالة نفسه داخل الإشعار (وليس فقط اسم المرسِل).</div>
+                    </div>
+                    <label class="theme-switch" style="width: 56px; height: 28px; flex-shrink:0;">
+                        <input type="checkbox" id="tgShowContentToggle" onchange="toggleTelegramContent()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <button class="btn" style="background:#229ED9; color:white;" onclick="sendTelegramTest()"><i class="fas fa-paper-plane"></i> إرسال إشعار تجريبي</button>
+                    <span id="tgStatusLine" style="font-size:12px; color:var(--text-muted);"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- مزيد من خيارات الدردشة (تظهر عند التفعيل فقط) -->
+        <div id="chat-extra-settings" style="display:none;">
+            <!-- كتم الصوت -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:36px; height:36px; background:rgba(99,102,241,0.12); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--primary); flex-shrink:0;">
+                            <i class="fas fa-volume-up"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight:700; font-size:14px; color:var(--text-main);">صوت الإشعارات</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">ينبّه بصوت عند وصول رسالة حتى لو الدردشة مغلقة</div>
+                        </div>
+                    </div>
+                    <button id="chatSoundMuteBtn" onclick="toggleChatSoundMute()" class="btn" style="white-space:nowrap; padding:7px 14px; font-size:12px; background:rgba(99,102,241,0.1); color:var(--primary); border:1px solid rgba(99,102,241,0.3);">
+                        <i class="fas fa-volume-up"></i> كتم صوت الإشعارات
+                    </button>
+                </div>
+            </div>
+        </div>
         <h3><i class="fas fa-key" style="color:var(--primary)"></i> تغيير كلمة المرور</h3>
         <div class="inner-box" style="margin-bottom:20px">
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -2552,6 +2693,61 @@
     </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════
+     نافذة إدارة عملاء الاشتراك المباع
+══════════════════════════════════════════════════ -->
+<div id="clientsManagerModal" class="modal-overlay hidden" onclick="if(event.target.id==='clientsManagerModal') closeClientsManagerModal()" style="z-index:7000;">
+    <div class="modal-content" style="max-width:460px;">
+        <h3 style="margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:15px; display:flex; align-items:center; gap:10px;">
+            <i class="fas fa-users-cog" style="color:var(--primary)"></i>
+            <span>إدارة العملاء</span>
+            <span id="clientsManagerSubBadge" style="font-size:12px; background:rgba(99,102,241,0.12); color:var(--primary); padding:3px 10px; border-radius:20px; font-weight:700; margin-right:auto;"></span>
+        </h3>
+        <div id="clientsManagerList" style="display:flex; flex-direction:column; gap:8px; max-height:420px; overflow-y:auto;"></div>
+        <button class="btn" style="width:100%; margin-top:16px; background:transparent; border:1px solid var(--border-color); color:var(--text-muted);" onclick="closeClientsManagerModal()">إغلاق</button>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     نافذة اختيار الاشتراك لنقل العميل
+══════════════════════════════════════════════════ -->
+<div id="buyerTransferPickModal" class="modal-overlay hidden" onclick="if(event.target.id==='buyerTransferPickModal') closeBuyerTransferPickModal()" style="z-index:7200;">
+    <div class="modal-content" style="max-width:500px;">
+        <h3 style="margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
+            <i class="fas fa-exchange-alt" style="color:var(--primary)"></i> نقل عميل إلى اشتراك آخر
+        </h3>
+        <div style="background:var(--bg-input); border:1px solid var(--border-color); border-radius:10px; padding:12px 14px; margin-bottom:14px; font-size:14px; line-height:1.7;">
+            <span style="color:var(--text-muted); font-size:13px;">العميل:</span>
+            <strong id="transferBuyerName" style="color:var(--primary); font-size:15px;"></strong>
+            <br>
+            <span style="color:var(--text-muted); font-size:13px;">من اشتراك:</span>
+            <strong id="transferFromSubName" style="color:var(--text-main); font-size:13px;"></strong>
+        </div>
+        <div style="position:relative; margin-bottom:12px;">
+            <i class="fas fa-search" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); pointer-events:none;"></i>
+            <input id="buyerTransferSearch" type="text" placeholder="بحث بالاسم أو الإيميل..." oninput="filterBuyerTransferList()" style="padding-right:40px;">
+        </div>
+        <div id="buyerTransferList" style="display:flex; flex-direction:column; gap:8px; max-height:380px; overflow-y:auto;"></div>
+        <button class="btn" style="width:100%; margin-top:16px; background:transparent; border:1px solid var(--border-color); color:var(--text-muted);" onclick="closeBuyerTransferPickModal()">إغلاق</button>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     نافذة تأكيد نقل العميل
+══════════════════════════════════════════════════ -->
+<div id="buyerTransferConfirmModal" class="modal-overlay hidden" onclick="if(event.target.id==='buyerTransferConfirmModal') closeBuyerTransferConfirmModal()" style="z-index:7400;">
+    <div class="modal-content" style="max-width:460px;">
+        <h3 style="margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
+            <i class="fas fa-exchange-alt" style="color:var(--primary)"></i> تأكيد نقل العميل
+        </h3>
+        <div id="buyerTransferConfirmBody" style="margin-bottom:16px;"></div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button id="buyerTransferConfirmOkBtn" class="btn btn-primary" style="flex:1;"><i class="fas fa-check"></i> تأكيد النقل</button>
+            <button class="btn" style="flex:1; background:transparent; border:1px solid var(--border-color); color:var(--text-muted);" onclick="closeBuyerTransferConfirmModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
 <div id="stockModal" class="modal-overlay hidden" onclick="closeStockModal(event)">
     <div class="modal-content">
         <h3 id="stockModalTitle" style="margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:15px;">إضافة اشتراك للمخزون</h3>
@@ -2683,8 +2879,8 @@ function _addMonths30(baseDate, months) {
 }
 
 // دالة مساعدة: تُعيد نص الوقت المتبقي
-// - أقل من 24 ساعة → بالساعات فقط
-// - 24 ساعة أو أكثر → بالأيام فقط
+// - أقل من 24 ساعة → بالساعات فقط (مثلاً: 23 ساعة)
+// - 24 ساعة أو أكثر → بالأيام مقرّبةً للأعلى (مثلاً: 29 يوم و13 ساعة → 30 يوم)
 // msLeft: الفرق بالميلي ثانية (موجب = لم ينتهِ، صفر أو سالب = منتهي)
 function _formatTimeLeft(msLeft) {
     if (msLeft <= 0) return null; // منتهي
@@ -2694,8 +2890,8 @@ function _formatTimeLeft(msLeft) {
         if (totalHours === 0) return 'أقل من ساعة';
         return `${totalHours} ساعة`;
     }
-    // 24 ساعة أو أكثر → عرض بالأيام فقط
-    return `${Math.floor(totalHours / 24)} يوم`;
+    // 24 ساعة أو أكثر → عرض بالأيام مقرّبةً للأعلى
+    return `${Math.ceil(msLeft / 86400000)} يوم`;
 }
 
 function safeJSON(str, fallback) {
@@ -2705,6 +2901,58 @@ function safeJSON(str, fallback) {
 function esc(s) { 
     if(typeof s !== 'string') return s; 
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); 
+}
+
+// ══════════════════════════════════════════════════════════════
+//  مُميّز النقر عن التمرير (Tap vs Scroll)
+//  يمنع فتح نافذة التعديل بالخطأ عند التمرير بالإصبع أو الماوس فوق الصفوف.
+//  نفتح النافذة فقط إذا كانت لمسة/نقرة حقيقية: حركة قليلة + وقت قصير.
+// ══════════════════════════════════════════════════════════════
+function _attachTapHandler(container, selector, dataKey, callback) {
+    if (!container) return;
+    // تفادي الربط المزدوج على نفس الحاوية
+    if (container._tapHandlerBound) return;
+    container._tapHandlerBound = true;
+
+    const MOVE_THRESHOLD = 12;   // بكسل — أي حركة أكبر تُعتبر تمريراً وليست نقرة
+    const TIME_THRESHOLD = 600;  // مللي ثانية — أطول من هذا يُعتبر ضغطاً مطوّلاً لا نقرة
+
+    let startX = 0, startY = 0, startT = 0, moved = false, activeRow = null;
+
+    const getRow = (target) => target.closest ? target.closest(selector) : null;
+
+    container.addEventListener('pointerdown', (e) => {
+        // نتجاهل النقرات على العناصر التفاعلية داخل الصف (أزرار/روابط/مدخلات)
+        if (e.target.closest('button, a, input, select, textarea, .badge-action')) { activeRow = null; return; }
+        activeRow = getRow(e.target);
+        if (!activeRow) return;
+        startX = e.clientX; startY = e.clientY; startT = Date.now(); moved = false;
+    }, { passive: true });
+
+    container.addEventListener('pointermove', (e) => {
+        if (!activeRow) return;
+        if (Math.abs(e.clientX - startX) > MOVE_THRESHOLD || Math.abs(e.clientY - startY) > MOVE_THRESHOLD) {
+            moved = true; // تحرك كفاية → هذا تمرير
+        }
+    }, { passive: true });
+
+    container.addEventListener('pointerup', (e) => {
+        if (!activeRow) return;
+        let row = activeRow;
+        activeRow = null;
+        let elapsed = Date.now() - startT;
+        // نقرة حقيقية فقط: لم يتحرك + وقت قصير + انتهت على نفس الصف
+        if (moved) return;
+        if (elapsed > TIME_THRESHOLD) return;
+        let endRow = getRow(e.target);
+        if (endRow !== row) return;
+        let id = row.getAttribute('data-' + dataKey);
+        if (id) callback(id);
+    });
+
+    // إلغاء التتبّع إذا خرج المؤشر أو أُلغيت اللمسة
+    container.addEventListener('pointercancel', () => { activeRow = null; }, { passive: true });
+    container.addEventListener('pointerleave', () => { activeRow = null; }, { passive: true });
 }
 
 const DEFAULT_USER = {
@@ -2753,28 +3001,8 @@ let myProfitChart = null;
 let mySalesChart = null;
 let currentUser = null;
 let _fbAuthReady = false;
-let _fbAuthInFlight = false;
-let _fbBgRetryTimer = null;
-let _fbAuthQueue = [];
-
-// تفريغ المهام المنتظِرة بعد نجاح المصادقة
-function _fbRunAuthQueue() {
-  const q = _fbAuthQueue; _fbAuthQueue = [];
-  q.forEach(cb => { try { if (cb) cb(); } catch(e){} });
-}
-
-// تمييز فشل الشبكة (نُعيد المحاولة) عن الباسورد الخاطئ (نطلب الإدخال)
-function _fbIsNetworkError(e) {
-  const code = (e && e.code) || '';
-  return code === 'auth/network-request-failed' ||
-         code === 'auth/internal-error' ||
-         code === 'auth/timeout' ||
-         (typeof navigator !== 'undefined' && navigator.onLine === false);
-}
-
-// إظهار واجهة إدخال الباسورد (مرة واحدة فقط)
-function _showFbAuthModal() {
-  if (document.getElementById('_fbAuthModal')) return;
+function _doAfterFbAuth(callback) {
+  if (_fbAuthReady) { callback(); return; }
   const modal = document.createElement('div');
   modal.id = '_fbAuthModal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:99999;display:flex;align-items:center;justify-content:center;';
@@ -2786,75 +3014,30 @@ function _showFbAuthModal() {
       <button id="_fbAuthBtn" onclick="_submitFbAuth('${`ahmed2037mohamed@gmail.com`}')" style="width:100%;padding:10px;border-radius:8px;background:var(--primary,#a78bfa);color:white;font-weight:700;border:none;cursor:pointer;font-size:14px;">دخول</button>
     </div>`;
   document.body.appendChild(modal);
-  const inp = document.getElementById('_fbAuthPass');
-  if (inp) {
-    inp.addEventListener('keydown', e => { if(e.key === 'Enter') _submitFbAuth('ahmed2037mohamed@gmail.com'); });
-    try { inp.focus(); } catch(e){}
-  }
-}
-
-// محاولة المصادقة في الخلفية بالباسورد المحفوظ
-function _tryBgFbAuth() {
-  if (_fbAuthReady || _fbAuthInFlight || _fbBgRetryTimer) return;
+  document.getElementById('_fbAuthPass').addEventListener('keydown', e => { if(e.key === 'Enter') _submitFbAuth('ahmed2037mohamed@gmail.com'); });
   const saved = localStorage.getItem('_fbAuthPass');
-  if (!saved) { _showFbAuthModal(); return; }   // لا يوجد باسورد محفوظ → اطلب الإدخال
-  _fbAuthInFlight = true;
-  authOrder.signInWithEmailAndPassword('ahmed2037mohamed@gmail.com', saved)
-    .then(() => {
-      _fbAuthInFlight = false;
-      _fbAuthReady = true;
-      if (_fbBgRetryTimer) { clearTimeout(_fbBgRetryTimer); _fbBgRetryTimer = null; }
-      document.getElementById('_fbAuthModal')?.remove();
-      _fbRunAuthQueue();
-    })
-    .catch(err => {
-      _fbAuthInFlight = false;
-      if (_fbIsNetworkError(err)) {
-        // فشل بسبب النت فقط → استمر بالمحاولة في الخلفية بهدوء دون إظهار الواجهة
-        if (_fbBgRetryTimer) clearTimeout(_fbBgRetryTimer);
-        _fbBgRetryTimer = setTimeout(() => { _fbBgRetryTimer = null; _tryBgFbAuth(); }, 5000);
-      } else {
-        // الباسورد فعلاً خاطئ → احذفه وأظهر واجهة الإدخال
-        localStorage.removeItem('_fbAuthPass');
-        _showFbAuthModal();
-      }
-    });
-}
-
-function _doAfterFbAuth(callback) {
-  if (_fbAuthReady) { if (callback) callback(); return; }
-  if (callback) _fbAuthQueue.push(callback);
-  _tryBgFbAuth();
-}
-
-// عند عودة الإنترنت أثناء انتظار المحاولة الخلفية → أعد المحاولة فوراً
-window.addEventListener('online', () => {
-  if (!_fbAuthReady && !document.getElementById('_fbAuthModal')) {
-    if (_fbBgRetryTimer) { clearTimeout(_fbBgRetryTimer); _fbBgRetryTimer = null; }
-    _tryBgFbAuth();
+  if (saved) {
+    authOrder.signInWithEmailAndPassword('ahmed2037mohamed@gmail.com', saved)
+      .then(() => { _fbAuthReady = true; document.getElementById('_fbAuthModal')?.remove(); callback(); })
+      .catch(() => { localStorage.removeItem('_fbAuthPass'); document.getElementById('_fbAuthPass').value = ''; });
   }
-});
+  window._fbAuthCallback = callback;
+}
 
 async function _submitFbAuth(email) {
   const pass = document.getElementById('_fbAuthPass').value;
   const btn = document.getElementById('_fbAuthBtn');
   const err = document.getElementById('_fbAuthErr');
   if (!pass) { err.textContent = 'أدخل الباسورد'; err.style.display = 'block'; return; }
-  btn.textContent = '...'; btn.disabled = true; err.style.display = 'none';
+  btn.textContent = '...'; btn.disabled = true;
   try {
     await authOrder.signInWithEmailAndPassword(email, pass);
     _fbAuthReady = true;
-    _fbAuthInFlight = false;
-    if (_fbBgRetryTimer) { clearTimeout(_fbBgRetryTimer); _fbBgRetryTimer = null; }
     localStorage.setItem('_fbAuthPass', pass);
     document.getElementById('_fbAuthModal')?.remove();
-    _fbRunAuthQueue();
+    if (window._fbAuthCallback) { window._fbAuthCallback(); window._fbAuthCallback = null; }
   } catch(e) {
-    if (_fbIsNetworkError(e)) {
-      err.textContent = 'تعذّر الاتصال — تحقق من الإنترنت وحاول مجدداً';
-    } else {
-      err.textContent = 'باسورد خاطئ';
-    }
+    err.textContent = 'باسورد خاطئ';
     err.style.display = 'block';
     btn.textContent = 'دخول'; btn.disabled = false;
   }
@@ -2976,7 +3159,7 @@ function refreshVip() {
             } else if (totalHoursVip < 24) {
                 vipTimeStr = totalHoursVip === 0 ? 'أقل من ساعة' : `${totalHoursVip} ساعة`;
             } else {
-                vipTimeStr = `${Math.floor(totalHoursVip / 24)} يوم`;
+                vipTimeStr = `${Math.ceil(msLeftVip / 86400000)} يوم`;
             }
             timeText = c.rankIndex > 0 ? vipTimeStr : '-';
             rankTd = `<td style="text-align:center; font-weight:bold; color:${rank.color}">${rank.name}</td>`;
@@ -3293,7 +3476,7 @@ function saveManualVip() {
     store.vipCustomers = JSON.stringify(vips);
     fbSave("vipCustomers", vips);
     
-    logAction(`إضافة رتبة يدوية للعميل ${name} (${phone}) بعدد ${count}`, 'danger', { type: 'add_vip', name, phone, count, assignedRank: VIP_RANKS[assignedRank]?.name || assignedRank, target });
+    logAction(`إضافة رتبة يدوية للعميل ${name}`, 'danger', { type: 'add_vip', name, phone, count, assignedRank: VIP_RANKS[assignedRank]?.name || assignedRank, target });
     document.getElementById("addVipModal").style.display = "none";
     refreshVip();
     notify("تمت إضافة العميل والرتبة بنجاح");
@@ -3872,9 +4055,13 @@ function initFirebase() {
                             store[k] = newStr;
                             if (!fromCache) lastServerState[k] = JSON.parse(JSON.stringify(data[k]));
                             if (k === 'employeeBonus' && !fromCache && currentUser) refreshEmployeeBonus();
-                            if (k === 'adminNotifications' && !fromCache && currentUser) {
-                                if (currentUser.role === 'admin') renderUsersTable();
-                                else {
+                            // ── إشعارات الأدمن: تعمل على كل تحديث (cache أو server) ──
+                            // السبب: Firestore يُطلق fromCache=true أولاً ويحدّث store،
+                            //        ثم fromCache=false لكن store[k] === newStr فلا تحديث.
+                            //        النتيجة: الإشعار لا يظهر إلا عند تسجيل الدخول من جديد.
+                            if (k === 'adminNotifications' && currentUser) {
+                                if (!fromCache && currentUser.role === 'admin') renderUsersTable();
+                                else if (currentUser.role !== 'admin') {
                                     let notifs = safeJSON(store.adminNotifications, {});
                                     let myNotif = notifs[currentUser.id];
                                     if (myNotif && !document.querySelector('[data-notif-overlay]')) {
@@ -4080,11 +4267,113 @@ function getDefaultData() {
     return {
         wallets:  safeJSON(store.wallets,  {"جوال باي — سعاد":{bal:0,cur:"₪",active:true},"جوال باي — محمد":{bal:0,cur:"₪",active:true},"بال باي — أحمد":{bal:0,cur:"₪",active:true},"بايننس — احمد":{bal:0,cur:"$",active:true}}),
         invest:   safeJSON(store.invest,   {ahmad:{d:0,s:0},mohamed:{d:0,s:0},store:{d:0,s:0}}),
-        settings: safeJSON(store.settings, {ahmad:0,mohamed:0,store:100,deductCost:false,exchangeRate:0,logsVis:"all",discountEnabled:false,vipEnabled:false,discountChance:25,discountMin:10,discountMax:20,validityMin:15,validityMax:45}),
+        settings: safeJSON(store.settings, {ahmad:0,mohamed:0,store:100,deductCost:false,exchangeRate:0,egpRate:13,logsVis:"all",discountEnabled:false,vipEnabled:false,discountChance:25,discountMin:10,discountMax:20,validityMin:15,validityMax:45}),
         services: safeJSON(store.services, []),
         vipCustomers: safeJSON(store.vipCustomers, {})
     };
 }
+// ══════════════════════════════════════════════════════════════
+//  خرائط الترجمة الشاملة للعربية (أنواع العمليات + أسماء الحقول + القيم)
+//  الهدف: ألا يظهر أي نص إنجليزي في سجل النشاط أو نافذة التفاصيل
+// ══════════════════════════════════════════════════════════════
+const LOG_TYPE_AR = {
+    // مبيعات ومشتريات
+    purchase:'تسجيل عملية بيع', manual_sell:'بيع يدوي من المخزون', undo:'تراجع عن عملية شراء',
+    stock_add:'شراء مخزون جديد', edit_history:'تعديل سجل مالي', delete_history:'حذف سجل مالي',
+    // محافظ وأموال
+    manual:'تعديل رصيد محفظة', set_wallet:'تعيين رصيد محفظة', manual_invest:'تعديل حصة شريك',
+    transfer:'تحويل أرصدة', withdraw:'سحب أموال', create_wallet:'إنشاء محفظة جديدة',
+    rename_wallet:'تعديل محفظة', delete_wallet:'حذف محفظة', withdraw_store:'سحب أموال',
+    // خصومات وكوبونات
+    manual_coupon:'إنشاء كود خصم يدوي', delete_coupon:'حذف كود خصم', invalid_discount:'محاولة كود خصم غير صالح',
+    discount_settings:'تعديل إعدادات أكواد الخصم',
+    // عملاء مميزون (VIP)
+    add_vip:'إضافة رتبة عميل مميز', delete_vip:'حذف رتبة عميل مميز', reset_all_vip:'إعادة تعيين كل العملاء المميزين',
+    vip_settings:'تعديل إعدادات نظام الرتب',
+    // مستخدمون وأمان
+    add_user:'إضافة مستخدم جديد', delete_user:'حذف مستخدم', user_edit:'تعديل بيانات مستخدم',
+    toggle_ban:'تغيير حالة مستخدم', password_change:'تغيير كلمة المرور', login:'تسجيل دخول',
+    auto_login:'دخول تلقائي', failed_login:'محاولة دخول فاشلة', logout:'تسجيل خروج',
+    send_notification:'إرسال إشعار لمستخدم', delete_notification:'حذف إشعار معلّق',
+    // مخزون
+    remove_buyer:'حذف عميل من بروفايل', remove_buyer_sold:'حذف عميل من اشتراك مباع',
+    transfer_buyer:'نقل عميل بين اشتراكات', adjust_profiles:'تعديل عدد البروفايلات',
+    return_sold_stock:'إرجاع اشتراك مباع', delete_sold_stock:'حذف اشتراك مباع',
+    delete_expired_stock:'حذف اشتراك منتهٍ من المخزون', archive_test_stock:'أرشفة اشتراك تجريبي',
+    archive_partial_stock:'أرشفة اشتراك منتهٍ جزئياً', update_stock_note:'تحديث ملاحظات مخزون',
+    card_removed:'تأكيد إزالة بطاقة', card_ignored:'تجاهل تذكير بطاقة',
+    // خدمات
+    add_service:'إضافة خدمة جديدة', edit_service:'تعديل خدمة',
+    // طلبات وحجوزات
+    delete_order:'حذف طلب وارد', booking_confirm:'تأكيد حجز', booking_delivery:'تسليم حجوزات',
+    order_delivery:'تأكيد تسليم طلب',
+    // رهن
+    add_pledge:'إضافة رهن جديد', delete_pledge:'حذف رهن', delete_all_pledges:'مسح جميع المرهونات',
+    // راتب الموظف
+    adjust_emp_bonus:'تعديل يدوي لزيادة راتب الموظف', emp_bonus_settings:'تعديل إعدادات عمولة الموظف',
+    // نظام وإعدادات
+    exchange_rate:'تعديل سعر الصرف', reset_budget:'إعادة تعيين مسار الميزانية',
+    export_backup:'تصدير نسخة احتياطية', import_backup:'استيراد نسخة احتياطية',
+    csv_export:'تصدير الأرشيف المالي (CSV)', hide_expired:'إخفاء اشتراكات منتهية',
+    add_note:'إضافة ملاحظة', add_task:'إضافة مهمة', whatsapp:'إرسال تذكير واتساب'
+};
+
+const LOG_KEY_AR = {
+    type:'النوع', customer:'العميل', customerName:'العميل', sub:'الخدمة', service:'الخدمة',
+    serviceName:'الخدمة', paid:'المدفوع', costVal:'التكلفة', cost:'التكلفة', toName:'المحفظة',
+    tBefore:'الرصيد قبل', tAfter:'الرصيد بعد', isComp:'عملية تعويض', isPledge:'عملية رهن',
+    isFirstProfile:'بروفايل أول', profilesCount:'عدد البروفايلات', appliedDiscountPct:'نسبة الخصم',
+    wallet:'المحفظة', reason:'السبب', before:'قبل', after:'بعد', diff:'الفارق',
+    syncedShare:'الحصة المرتبطة', person:'الشريك', currency:'العملة', syncedWallet:'المحفظة المرتبطة',
+    from:'من', to:'إلى', amount:'المبلغ', fee:'العمولة', feeCur:'عملة العمولة', result:'الصافي',
+    fromCur:'عملة المصدر', toCur:'عملة الهدف', item:'العنصر', wBefore:'الرصيد قبل', wAfter:'الرصيد بعد',
+    deducted:'المخصوم', attempted:'الحساب المُستهدف', password:'كلمة المرور المُدخلة', code:'الكود',
+    search:'فلتر البحث', count:'العدد', shareBefore:'الحصة قبل', shareAfter:'الحصة بعد',
+    walletBefore:'المحفظة قبل', walletAfter:'المحفظة بعد', walletName:'المحفظة', netAmount:'الصافي',
+    deductedFromWallet:'المخصوم من المحفظة', time:'الوقت', username:'اسم المستخدم', role:'الصلاحية',
+    oldRole:'الصلاحية القديمة', newRole:'الصلاحية الجديدة', device:'الجهاز', loginCount:'عدد مرات الدخول',
+    oldStatus:'الحالة السابقة', newStatus:'الحالة الجديدة', lastLogin:'آخر دخول', name:'الاسم',
+    phone:'الجوال', rank:'الرتبة', assignedRank:'الرتبة المُعيّنة', purchaseCount:'عدد المشتريات',
+    target:'الهدف', percentage:'النسبة', validDays:'مدة الصلاحية', maxUses:'الحد الأقصى للاستخدام',
+    usedCount:'عدد مرات الاستخدام', newRate:'السعر الجديد', enabled:'مفعّل', chance:'الاحتمالية',
+    minDiscount:'أدنى خصم', maxDiscount:'أقصى خصم', minValidity:'أدنى صلاحية', maxValidity:'أقصى صلاحية',
+    stockName:'اسم الاشتراك', vendor:'البائع', addedDate:'تاريخ الإضافة', soldDate:'تاريخ البيع',
+    soldProfiles:'البروفايلات المباعة', totalProfiles:'إجمالي البروفايلات', removedBuyer:'العميل المحذوف',
+    remainingProfiles:'البروفايلات المتبقية', beforeTotal:'الإجمالي قبل', afterTotal:'الإجمالي بعد',
+    buyers:'العملاء', notes:'الملاحظات', purpose:'الغرض', branches:'الفروع', newCurrency:'العملة الجديدة',
+    oldCurrency:'العملة القديمة', lastBalance:'آخر رصيد', fileName:'اسم الملف', importedAt:'وقت الاستيراد',
+    exportedAt:'وقت التصدير', records:'السجلات', balanceUSD:'الرصيد بالدولار', resetDate:'تاريخ التصفير',
+    targetUsername:'المستخدم المستهدف', message:'الرسالة', sentAt:'وقت الإرسال', rate:'سعر الصرف',
+    duration:'المدة', expiry:'تاريخ الانتهاء', id:'المعرّف', userId:'معرّف المستخدم', ip:'عنوان IP',
+    browser:'المتصفح', country:'الدولة', city:'المدينة', purchaseNotes:'ملاحظات العملية',
+    opType:'نوع العملية', profit:'الربح', paidCurrency:'عملة الدفع',
+    totalCount:'العدد الكلي', operation:'الإجراء', month:'الشهر',
+    customerPhone:'جوال العميل', paidCur:'عملة الدفع',
+    tier1:'الشريحة الأولى', tier2:'الشريحة الثانية',
+    fromStock:'من اشتراك', toStock:'إلى اشتراك', buyerName:'اسم العميل',
+    fromWallet:'من محفظة', toWallet:'إلى محفظة'
+};
+
+// ترجمة القيم الإنجليزية الشائعة (أنظمة تشغيل، حالات، إلخ)
+const LOG_VALUE_AR = {
+    'Windows':'ويندوز','Mac OS':'ماك','iOS':'آيفون/آيباد','Android':'أندرويد',
+    'Linux':'لينكس','Unknown':'غير معروف','active':'مفعّل','banned':'محظور',
+    'sale':'للبيع','test':'تجريبي','admin':'أدمن','employee':'موظف',
+    'viewer':'مشاهد عادي','viewer_plus':'مشاهد متقدم'
+};
+
+// دالة موحّدة: تُحوّل قيمة أي حقل إلى نص عربي مقروء
+function _trLogValue(v) {
+    if (v === null || v === undefined) return '';
+    if (typeof v === 'boolean') return v ? 'نعم' : 'لا';
+    if (typeof v === 'object') {
+        try { return Object.entries(v).map(([kk, vv]) => `${LOG_KEY_AR[kk] || kk}: ${_trLogValue(vv)}`).join('، '); }
+        catch(e) { return JSON.stringify(v); }
+    }
+    let s = String(v);
+    return LOG_VALUE_AR[s] || s;
+}
+
 function showModalDetails(details) {
     if(!details) return;
     const body = document.getElementById("modalBody");
@@ -4205,27 +4494,19 @@ function showModalDetails(details) {
         if(details.from)   body.innerHTML += row("من تاريخ", esc(details.from));
         if(details.to)     body.innerHTML += row("إلى تاريخ", esc(details.to));
     } else {
-        // عرض عام لأي تفاصيل غير معرَّفة
-        const keyMap = {
-            type:'النوع', customer:'العميل', sub:'الخدمة', paid:'المدفوع', costVal:'التكلفة',
-            toName:'المحفظة', tBefore:'الرصيد قبل', tAfter:'الرصيد بعد', isComp:'تعويض',
-            appliedDiscountPct:'نسبة الخصم', wallet:'المحفظة', reason:'السبب', before:'قبل',
-            after:'بعد', diff:'الفارق', syncedShare:'الحصة المرتبطة', person:'الشريك',
-            currency:'العملة', syncedWallet:'المحفظة المرتبطة', from:'من', to:'إلى',
-            amount:'المبلغ', fee:'العمولة', result:'الصافي', fromCur:'عملة المصدر',
-            toCur:'عملة الهدف', item:'العنصر', cost:'التكلفة', wBefore:'الرصيد قبل',
-            wAfter:'الرصيد بعد', deducted:'المخصوم', attempted:'الحساب', password:'كلمة المرور',
-            code:'الكود', search:'البحث', count:'العدد', service:'الخدمة',
-            shareBefore:'الحصة قبل', shareAfter:'الحصة بعد', walletBefore:'المحفظة قبل',
-            walletAfter:'المحفظة بعد', walletName:'المحفظة', netAmount:'الصافي',
-            deductedFromWallet:'المخصوم من المحفظة', time:'الوقت'
-        };
+        // عرض عام لأي تفاصيل غير معرَّفة — يعتمد على خرائط الترجمة الشاملة
+        // إظهار اسم العملية بالعربي أولاً (بدل النوع الإنجليزي الخام)
+        if (details.type && LOG_TYPE_AR[details.type]) {
+            body.innerHTML += row("العملية", LOG_TYPE_AR[details.type]);
+        }
+        // حقول تقنية داخلية لا تُعرض للمستخدم (معرّفات، إلخ)
+        const _hiddenKeys = ['purchaseId', 'ref', 'id', 'userId', 'targetId', '_docId', 'docId'];
         Object.entries(details).forEach(([k, v]) => {
             if(v === null || v === undefined || v === '' || v === 'null') return;
-            let label = keyMap[k] || k;
-            let displayVal = typeof v === 'boolean' ? (v ? 'نعم' : 'لا') :
-                             typeof v === 'object' ? JSON.stringify(v) : String(v);
-            body.innerHTML += row(label, esc(displayVal));
+            if(k === 'type') return; // عُرض بالأعلى كاسم عملية عربي
+            if(_hiddenKeys.includes(k)) return; // إخفاء الحقول التقنية
+            let label = LOG_KEY_AR[k] || k;
+            body.innerHTML += row(label, esc(_trLogValue(v)));
         });
     }
     
@@ -4988,7 +5269,7 @@ function init(){
     if(!store.invest) store.invest = JSON.stringify({ahmad:{d:0,s:0},mohamed:{d:0,s:0},store:{d:0,s:0}}); 
     if(!store.generalNotes) store.generalNotes = "[]"; 
     if(!store.todoList) store.todoList = "[]"; 
-    if(!store.settings) store.settings = JSON.stringify({ahmad: 0, mohamed: 0, store: 100, deductCost: false, exchangeRate: 0, logsVis: 'all', discountEnabled:true, discountChance:25, discountMin:10, discountMax:20, validityMin:15, validityMax:45}); 
+    if(!store.settings) store.settings = JSON.stringify({ahmad: 0, mohamed: 0, store: 100, deductCost: false, exchangeRate: 0, egpRate: 13, logsVis: 'all', discountEnabled:true, discountChance:25, discountMin:10, discountMax:20, validityMin:15, validityMax:45}); 
     if(!store.activityLog) store.activityLog = "[]"; 
     if(!store.stock) store.stock = "[]"; 
     if(!store.services) store.services = "[]";
@@ -5574,6 +5855,7 @@ function applyRBAC() {
     safeToggle("sec-manage-wallets", "add");
     safeToggle("sec-rename-wallet", "add");
     safeToggle("sec-profit-settings", "add");
+    safeToggle("sec-emp-bonus-settings", "add");
     safeToggle("sec-discount-settings", "add");
     safeToggle("sec-vip-settings", "add");
     safeToggle("todoSection", "add");
@@ -5619,6 +5901,7 @@ function applyRBAC() {
         safeToggle("sec-manage-wallets", "remove");
         safeToggle("sec-rename-wallet", "remove");
         safeToggle("sec-profit-settings", "remove");
+        safeToggle("sec-emp-bonus-settings", "remove");
         safeToggle("sec-discount-settings", "remove");
         safeToggle("sec-vip-settings", "remove");
         safeToggle("sec-manage-services", "remove");
@@ -5640,6 +5923,11 @@ function applyRBAC() {
         safeToggle("btnAddVip", "remove");
         safeToggle("btnDeleteAllVip", "remove");
         safeToggle("btnClearChat", "remove");
+
+        // البطاقة العلوية (زيادة الراتب - هذا الشهر) للموظف فقط — تُخفى عن الأدمن دائماً.
+        // الأدمن يتحكم بالزيادة (إضافة/خصم) والتنقل بين الأشهر من صفحة سحب الأموال.
+        safeToggle("statCardEmployeeBonus", "add");
+        refreshEmployeeBonus();
     } 
     else if (role === 'employee') {
         if(tfRes) tfRes.readOnly = true;
@@ -5656,7 +5944,7 @@ function applyRBAC() {
         
         safeToggle("btnStock", "remove");
         safeToggle("btnUndo", "remove");
-        safeToggle("btnExportCSV", "remove"); // <--- إظهار للموظف
+        safeToggle("btnExportCSV", "add"); // <--- إخفاء زر التصدير عن الموظف (للأدمن فقط)
         safeToggle("btnHideExpired", "add");
         safeToggle("btnClearHistory", "add");
         safeToggle("btnServicesMgmt", "add");
@@ -5673,7 +5961,7 @@ function applyRBAC() {
         safeToggle("thVipAction", "add");
         let _hasEmpNow = (() => { try { let uu = safeJSON(store.users, []); return Array.isArray(uu) && uu.some(u => u && u.role === 'employee'); } catch(e){ return false; } })();
         safeToggle("statCardEmployeeBonus", _hasEmpNow ? "remove" : "add");
-        safeToggle("empBonusAdminBox", _hasEmpNow ? "remove" : "add");
+        // ملاحظة: صندوق التعديل اليدوي (empBonusAdminBox) للأدمن فقط — تتكفّل refreshEmployeeBonus بإخفائه عن الموظف
         refreshEmployeeBonus();
     }
     else if (role === 'viewer_plus') {
@@ -6071,7 +6359,7 @@ function toggleBan(id) {
         let newState = users[index].status === 'active' ? 'banned' : 'active';
         users[index].status = newState;
         store.users = JSON.stringify(users); fbSave("users", users);
-        logAction(`تغيير حالة المستخدم ${users[index].username} إلى ${newState}`, 'danger', { type: 'toggle_ban', username: users[index].username, oldStatus: newState === 'banned' ? 'مفعّل' : 'محظور', newStatus: newState === 'banned' ? 'محظور' : 'مفعّل', role: getRoleName(users[index].role) });
+        logAction(`تغيير حالة المستخدم ${users[index].username} إلى ${newState === 'banned' ? 'محظور' : 'مفعّل'}`, 'danger', { type: 'toggle_ban', username: users[index].username, oldStatus: newState === 'banned' ? 'مفعّل' : 'محظور', newStatus: newState === 'banned' ? 'محظور' : 'مفعّل', role: getRoleName(users[index].role) });
         renderUsersTable(); 
     }
 }
@@ -6121,7 +6409,7 @@ function showPage(id, btn){
     
     if(id === 'purchase') { loadServices(); loadPurchaseStock(); }
     if(id === 'generalNotes') refreshGeneralNotes();
-    if(id === 'investment') refreshInvestment();
+    if(id === 'investment') { _empBonusViewMonth = _curMonthKey(); refreshInvestment(); }
     if(id === 'history') { refreshHistory(); initDatePickers(); }
     if(id === 'wallets') { loadWallets(); refreshWallets(); }
     if(id === 'expiring') refreshExpiring();
@@ -6253,6 +6541,7 @@ function loadPurchaseStock() {
             }
         });
         selPurchase.innerHTML = html;
+        syncPurchaseProfilesMax(); // إعادة ضبط قسم البروفايلات عند تحديث القائمة
     }
 }
 
@@ -6271,44 +6560,68 @@ function syncPurchaseDuration() {
 }
 
 // ── تحديث الحد الأقصى لعدد البروفايلات بحسب الاشتراك المختار ──
-// يُستدعى عند تغيير اختيار المخزون: يقرأ (totalProfiles - soldProfiles)
-// ويضبط الحقل ويعيد تصفيره لـ 0 لإجبار المستخدم على اختيار العدد يدوياً
+// يُستدعى عند تغيير اختيار المخزون:
+// - لو ما اختار بعد → يُخفي قسم البروفايلات
+// - لو فيه بروفايل واحد فقط → يُخفي أيضاً ويضبط القيمة على 1 تلقائياً
+// - لو فيه أكثر من واحد → يُظهر القسم مع زرَّي +/-
 function syncPurchaseProfilesMax() {
     let stockId = document.getElementById("sub").value;
+    let group = document.getElementById("purchaseProfilesGroup");
     let countInput = document.getElementById("purchaseProfilesCount");
-    let hintEl = document.getElementById("purchaseProfilesHint");
-    if (!countInput) return;
+    let display = document.getElementById("purchaseProfilesDisplay");
+    let maxEl = document.getElementById("purchaseProfilesMax");
+    if (!group || !countInput) return;
+
+    // لا يوجد اشتراك مختار → أخفِ القسم كاملاً
     if (!stockId) {
-        countInput.value = "0";
-        countInput.removeAttribute('max');
-        if (hintEl) hintEl.innerHTML = '<i class="fas fa-circle-info"></i> اختر اشتراكاً أولاً لمعرفة الحد الأقصى المتاح، ثم أدخل عدد البروفايلات (1 أو أكثر)';
+        group.style.display = "none";
+        countInput.value = "1";
+        if (display) display.textContent = "1";
         return;
     }
+
     let stockList = safeJSON(store.stock, []);
     let stItem = stockList.find(x => x.id === stockId);
-    if (!stItem) return;
+    if (!stItem) { group.style.display = "none"; return; }
+
     let total = parseInt(stItem.totalProfiles) || 1;
     let sold = parseInt(stItem.soldProfiles) || 0;
     let available = Math.max(0, total - sold);
+
+    // بروفايل واحد فقط متاح → اضبط تلقائياً وأخفِ القسم
+    if (available <= 1) {
+        countInput.value = available > 0 ? "1" : "0";
+        if (display) display.textContent = countInput.value;
+        group.style.display = "none";
+        return;
+    }
+
+    // أكثر من واحد → أظهر القسم مع زرَّي +/-
+    countInput.value = "1";
+    if (display) display.textContent = "1";
+    if (maxEl) maxEl.textContent = available;
     countInput.setAttribute('max', available);
-    countInput.value = "0"; // إعادة تصفير إجبارية عند كل اختيار جديد
-    if (hintEl) hintEl.innerHTML = `<i class="fas fa-circle-info"></i> الحد الأقصى المتاح لهذا الاشتراك: <b>${available}</b> بروفايل`;
+    group.style.display = "";
 }
 
-// ── منع إدخال قيم سالبة أو أكبر من الحد الأقصى المتاح ──
-function _clampPurchaseProfilesCount() {
+// ── تعديل العدد بزرَّي + و− ──
+function _stepPurchaseProfiles(delta) {
     let el = document.getElementById("purchaseProfilesCount");
+    let display = document.getElementById("purchaseProfilesDisplay");
     if (!el) return;
-    let v = Math.floor(parseFloat(el.value)) || 0;
-    if (v < 0) v = 0;
-    let maxAttr = parseInt(el.getAttribute('max'));
-    if (!isNaN(maxAttr) && v > maxAttr) v = maxAttr;
+    let v = (parseInt(el.value) || 1) + delta;
+    let maxAttr = parseInt(el.getAttribute('max')) || 1;
+    if (v < 1) v = 1;
+    if (v > maxAttr) v = maxAttr;
     el.value = v;
+    if (display) display.textContent = v;
 }
 
 function loadProfitSettings(){
     let s = safeJSON(store.settings, {});
     document.getElementById("setExchangeRate").value = s.exchangeRate || 0;
+    let _egpEl = document.getElementById("setEgpRate");
+    if(_egpEl) _egpEl.value = s.egpRate || 13;
     
     let isDiscountActive = s.discountEnabled === true;
     document.getElementById("setDiscountEnabled").checked = isDiscountActive;
@@ -6326,6 +6639,9 @@ function loadProfitSettings(){
     document.getElementById("setValidityMax").value = s.validityMax ?? 45;
     let _alertDaysEl = document.getElementById("setExpiryAlertDays");
     if (_alertDaysEl) _alertDaysEl.value = s.expiryAlertDays ?? 1;
+
+    // ── تحميل إعدادات عمولة الموظف (النظام الديناميكي) ──
+    if (typeof renderEmpTiers === 'function') renderEmpTiers();
 }
 
 function saveAlertSettings() {
@@ -6350,6 +6666,7 @@ function saveProfitSettings(){
     if(currentUser.role !== 'admin') return notify("للأدمن فقط", "error");
     let sObj = safeJSON(store.settings, {});
     sObj.exchangeRate = +document.getElementById("setExchangeRate").value;
+    let _egpSaveEl = document.getElementById("setEgpRate"); if(_egpSaveEl && _egpSaveEl.value) sObj.egpRate = +_egpSaveEl.value;
     store.settings = JSON.stringify(sObj); fbSave("settings", sObj);
     logAction("تعديل سعر الصرف", 'general', { type: 'exchange_rate', newRate: sObj.exchangeRate });
     notify("تم الحفظ");
@@ -6415,6 +6732,140 @@ function saveVipSettings(){
     
     logAction("تعديل إعدادات نظام الرتب", 'general', { type: 'vip_settings', enabled: sObj.vipEnabled });
     notify(sObj.vipEnabled ? "تم تفعيل نظام الرتب" : "تم إيقاف نظام الرتب");
+}
+
+// ══════════════════════════════════════════════════════════════
+//  نظام شرائح عمولة الموظف الديناميكي (نموذج نقاط البداية)
+// ══════════════════════════════════════════════════════════════
+
+// يبني صف شريحة واحد داخل القائمة
+function _empTierRowHTML(startVal, pctVal) {
+    let sv = (startVal === null || startVal === undefined) ? '' : startVal;
+    let pv = (pctVal === null || pctVal === undefined) ? '' : pctVal;
+    return `
+    <div class="emp-tier-row" style="background:var(--bg-input); border:1px solid var(--border-color); border-radius:12px; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:8px;">
+            <div class="emp-tier-title" style="font-size:13px; font-weight:800; color:#eab308; display:flex; align-items:center; gap:6px;"><i class="fas fa-layer-group"></i> <span class="emp-tier-name">شريحة</span></div>
+            <button type="button" class="emp-tier-del" onclick="removeEmpTierRow(this)" title="حذف الشريحة" style="width:32px; height:32px; flex-shrink:0; border:none; border-radius:9px; background:rgba(239,68,68,0.12); color:var(--danger); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px;"><i class="fas fa-trash-alt"></i></button>
+        </div>
+        <div class="emp-tier-range" style="font-size:12px; color:var(--text-muted); margin-bottom:12px; padding:7px 10px; background:rgba(234,179,8,0.08); border-radius:8px; text-align:center;">—</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+            <div style="flex:1; min-width:110px;">
+                <label style="font-size:12px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:5px;">تبدأ من عملية رقم</label>
+                <input type="number" class="emp-tier-start" min="1" step="1" value="${sv}" placeholder="8" oninput="_updateEmpTierRanges()" style="width:100%;">
+            </div>
+            <div style="flex:1; min-width:110px;">
+                <label style="font-size:12px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:5px;">النسبة %</label>
+                <input type="number" class="emp-tier-pct" min="0" max="100" step="0.1" value="${pv}" placeholder="15" style="width:100%;">
+            </div>
+        </div>
+    </div>`;
+}
+
+// يعرض قائمة الشرائح من الإعدادات المحفوظة
+function renderEmpTiers() {
+    let list = document.getElementById('empTiersList');
+    if (!list) return;
+    let tiers = _getEmpBonusTiers();
+    list.innerHTML = tiers.map(t => _empTierRowHTML(t.startSale, t.pct)).join('');
+    _updateEmpTierRanges();
+}
+
+// إضافة شريحة جديدة (تبدأ فارغة)
+function addEmpTierRow() {
+    let list = document.getElementById('empTiersList');
+    if (!list) return;
+    list.insertAdjacentHTML('beforeend', _empTierRowHTML('', ''));
+    _updateEmpTierRanges();
+}
+
+// حذف شريحة (مع منع حذف آخر شريحة متبقية)
+function removeEmpTierRow(btn) {
+    let list = document.getElementById('empTiersList');
+    let rows = list.querySelectorAll('.emp-tier-row');
+    if (rows.length <= 1) return notify("يجب أن تبقى شريحة واحدة على الأقل", "error");
+    let row = btn.closest('.emp-tier-row');
+    if (row) row.remove();
+    _updateEmpTierRanges();
+}
+
+// يحدّث نطاق كل شريحة (من–إلى) والأسماء تلقائياً بناءً على نقاط البداية
+function _updateEmpTierRanges() {
+    let list = document.getElementById('empTiersList');
+    if (!list) return;
+    let rows = Array.from(list.querySelectorAll('.emp-tier-row'));
+    // اجمع نقاط البداية مع مرجع الصف
+    let data = rows.map(r => ({
+        row: r,
+        start: parseInt(r.querySelector('.emp-tier-start').value)
+    }));
+    // رتّب حسب البداية (الصفوف ذات القيمة الصالحة فقط تُرتّب فعلياً في العرض)
+    let sorted = data.slice().filter(d => !isNaN(d.start)).sort((a,b) => a.start - b.start);
+
+    rows.forEach((r) => {
+        let startEl = r.querySelector('.emp-tier-start');
+        let rangeEl = r.querySelector('.emp-tier-range');
+        let nameEl = r.querySelector('.emp-tier-name');
+        let start = parseInt(startEl.value);
+        if (isNaN(start)) { rangeEl.textContent = 'أدخل رقم بداية الشريحة'; nameEl.textContent = 'شريحة'; return; }
+        // موقع هذه الشريحة ضمن المرتّبة
+        let idx = sorted.findIndex(d => d.row === r);
+        let next = sorted[idx + 1];
+        nameEl.textContent = 'الشريحة ' + (idx + 1);
+        if (next && !isNaN(next.start)) {
+            let end = next.start - 1;
+            if (end < start) rangeEl.textContent = `⚠ تتعارض مع الشريحة التالية`;
+            else if (end === start) rangeEl.textContent = `العملية رقم ${start} فقط`;
+            else rangeEl.textContent = `من العملية ${start} إلى ${end}`;
+        } else {
+            rangeEl.textContent = `من العملية ${start} فأكثر`;
+        }
+    });
+}
+
+function saveEmpBonusSettings(){
+    if(currentUser.role !== 'admin') return notify("للأدمن فقط", "error");
+    let list = document.getElementById('empTiersList');
+    let rows = Array.from(list.querySelectorAll('.emp-tier-row'));
+    if (rows.length === 0) return notify("أضف شريحة واحدة على الأقل", "error");
+
+    // اجمع القيم
+    let tiers = [];
+    for (let i = 0; i < rows.length; i++) {
+        let start = parseInt(rows[i].querySelector('.emp-tier-start').value);
+        let pct = parseFloat(rows[i].querySelector('.emp-tier-pct').value);
+        if (isNaN(start) || start < 1) return notify(`أدخل رقم بداية صحيح للشريحة رقم ${i+1}`, "error");
+        if (isNaN(pct) || pct < 0 || pct > 100) return notify(`نسبة الشريحة رقم ${i+1} يجب أن تكون بين 0 و100`, "error");
+        tiers.push({ startSale: start, pct: pct });
+    }
+
+    // رتّب حسب البداية
+    tiers.sort((a,b) => a.startSale - b.startSale);
+
+    // تحقق: لا تتكرر نقطة بداية، والنسبة تتصاعد (كل شريحة ≥ التي قبلها)
+    for (let i = 1; i < tiers.length; i++) {
+        if (tiers[i].startSale === tiers[i-1].startSale)
+            return notify(`لا يمكن أن تبدأ شريحتان من نفس رقم العملية (${tiers[i].startSale})`, "error");
+        if (tiers[i].pct < tiers[i-1].pct)
+            return notify("نسبة كل شريحة يجب أن تكون أكبر من أو تساوي نسبة الشريحة التي قبلها (لأنها لمبيعات أعلى)", "error");
+    }
+
+    let sObj = safeJSON(store.settings, {});
+    sObj.empBonusTiers = tiers;
+    store.settings = JSON.stringify(sObj); fbSave("settings", sObj);
+
+    // إعادة العرض المرتّب
+    renderEmpTiers();
+
+    // سجل مفصّل: كل شريحة بنطاقها
+    let details = { type: 'emp_bonus_settings' };
+    tiers.forEach((t, i) => {
+        let next = tiers[i+1];
+        let rangeTxt = next ? `من ${t.startSale} إلى ${next.startSale - 1}` : `من ${t.startSale} فأكثر`;
+        details['الشريحة ' + (i+1)] = `${rangeTxt} = ${t.pct}%`;
+    });
+    logAction("تعديل إعدادات عمولة الموظف", 'general', details);
+    notify("تم حفظ إعدادات العمولة");
 }
 
 async function resetAllVips(){
@@ -6560,6 +7011,7 @@ function addPurchase(){
     document.getElementById("customerPhone").value = customerPhoneVal;
 
     let paidCur = document.getElementById("paidCurrency").value;
+    if(!paidCur) { notify("يرجى اختيار العملة", "error"); return; }
     let duration = pDur;
     let settings = safeJSON(store.settings, {});
     let rate = settings.exchangeRate && settings.exchangeRate > 0 ? settings.exchangeRate : 1;
@@ -6682,17 +7134,24 @@ function _executePurchase(paid, paidCur, duration, settings, stItem, cleanName, 
     let nmm = (nd.getMonth()+1).toString().padStart(2,'0');
     let nddStr = nd.getDate().toString().padStart(2,'0');
 
-    // ─── حساب تاريخ الانتهاء بالأولوية التالية: ───────────────────
-    // 1) تاريخ شراء المخزون (stItem.timestamp) ← الأصل
-    // 2) تاريخ البيع الفعلي (nd = اليوم)
-    // 3) لا يُحسب (exp = null) إذا duration = 0
+    // ─── حساب تاريخ الانتهاء ─────────────────────────────────────
+    // • Shared (totalProfiles > 1): المدة تبدأ من يوم الشراء الفعلي (اليوم)
+    //   ← العميل يأخذ مدة كاملة بغضّ النظر عن كم بقي في المخزون
+    //   مثال: اشتراك شهر، باقي منه 20 يوم → انتهاء العميل بعد 30 يوم من اليوم
+    // • فردي (totalProfiles = 1): المدة تُحسب من تاريخ شراء المخزون (الوقت المتبقي الحقيقي)
+    // • duration = 0 → لا انتهاء
     let exp = null;
     if (duration > 0) {
+        let isShared = (parseInt(stItem.totalProfiles) || 1) > 1;
         let baseDate;
-        if (stItem.timestamp) {
+        if (isShared) {
+            // مشترك: العميل يستحق مدة كاملة من يوم اشتراكه
+            baseDate = new Date(nd);
+        } else if (stItem.timestamp) {
+            // فردي: نستخدم تاريخ المخزون (ما تبقّى فعلاً)
             baseDate = new Date(stItem.timestamp);
         } else {
-            baseDate = new Date(nd); // fallback: تاريخ البيع
+            baseDate = new Date(nd); // fallback
         }
         exp = _addMonths30(baseDate, duration);
     }
@@ -6919,7 +7378,19 @@ function _executePurchase(paid, paidCur, duration, settings, stItem, cleanName, 
     loadPurchaseStock();
     refreshAll();  notify("تمت العملية بنجاح");
     
-    document.getElementById("paidAmount").value=""; document.getElementById("customer").value=""; document.getElementById("sub").value=""; document.getElementById("customerPhone").value=""; document.getElementById("discountCodeInput").value=""; document.getElementById("isCompensation").checked = false; document.getElementById("customerPhone").style.borderColor = ""; document.getElementById("purchaseNotes").value = ""; document.getElementById("purchaseProfilesCount").value = "0"; document.getElementById("purchaseProfilesCount").removeAttribute('max'); if(document.getElementById("purchaseProfilesHint")) document.getElementById("purchaseProfilesHint").innerHTML = '<i class="fas fa-circle-info"></i> اختر اشتراكاً أولاً لمعرفة الحد الأقصى المتاح، ثم أدخل عدد البروفايلات (1 أو أكثر)';
+    document.getElementById("paidAmount").value=""; document.getElementById("customer").value=""; document.getElementById("sub").value=""; document.getElementById("customerPhone").value=""; document.getElementById("discountCodeInput").value=""; document.getElementById("isCompensation").checked = false; document.getElementById("customerPhone").style.borderColor = ""; document.getElementById("purchaseNotes").value = ""; document.getElementById("purchaseProfilesCount").value = "0"; document.getElementById("purchaseProfilesCount").removeAttribute('max');
+    // ── إرجاع كل خيارات الشراء للوضع الافتراضي بعد إتمام العملية ──
+    document.getElementById("paidCurrency").value = "";            // العملة ترجع إلى (اختر العملة)
+    let _upEl = document.getElementById("usePledge");             // إلغاء تفعيل الحساب المرهون
+    if (_upEl) { _upEl.checked = false; togglePledgeField(); }
+    let _psEl = document.getElementById("pledgeSelect");
+    if (_psEl) _psEl.value = "";
+    if (document.getElementById("subDuration")) document.getElementById("subDuration").value = "1";
+    // استرجاع بنية تلميح عدد البروفايلات (مع عنصر الحد الأقصى) حتى تعمل عمليات الشراء التالية بشكل صحيح
+    let _ppHint = document.getElementById("purchaseProfilesHint");
+    if (_ppHint) _ppHint.innerHTML = '<i class="fas fa-circle-info"></i> الحد الأقصى المتاح: <b id="purchaseProfilesMax">1</b> بروفايل';
+    // إخفاء قسم البروفايلات وإعادة ضبط العداد بحسب الاشتراك (الفارغ الآن)
+    if (typeof syncPurchaseProfilesMax === 'function') syncPurchaseProfilesMax();
 }
 
 function showCouponModal(coupon, phone, onCloseCallback = null) {
@@ -7040,7 +7511,7 @@ function saveManualCoupon() {
     let dList = safeJSON(store.discounts, []);
     dList.unshift(tempMC);
     store.discounts = JSON.stringify(dList); fbSave("discounts", dList);
-    logAction(`إنشاء كود خصم يدوي بنسبة ${tempMC.percentage}% للعميل ${tempMC.customer}`, 'financial', { type: 'manual_coupon', code: tempMC.code, customer: tempMC.customer, percentage: tempMC.percentage + '%', validDays: tempMC.days + ' يوم', maxUses: tempMC.maxUses });
+    logAction(`إنشاء كود خصم يدوي للعميل ${tempMC.customer}`, 'financial', { type: 'manual_coupon', code: tempMC.code, customer: tempMC.customer, percentage: tempMC.percentage + '%', validDays: tempMC.days + ' يوم', maxUses: tempMC.maxUses });
     document.getElementById("manualCouponModal").style.display = "none";
     refreshDiscounts();
     notify("تم حفظ الكود بنجاح");
@@ -7305,14 +7776,24 @@ function refreshWallets(_pPre, _bPre) {
     // تحديث الواجهة
     if(document.getElementById("statSales")) document.getElementById("statSales").textContent = todayCount;
     if(document.getElementById("statMonthSales")) document.getElementById("statMonthSales").textContent = mSales;
+    let _egpRate = (settings.egpRate && settings.egpRate > 0) ? settings.egpRate : 13;
+    let _isEgypt = window._userCountry === 'EG';
     if(document.getElementById("statTodayProfits")) {
         let el = document.getElementById("statTodayProfits");
-        el.textContent = (isTodayPositive ? "+" : "-") + fix(Math.abs(tDeltaSHK)) + " ₪";
+        if(_isEgypt) {
+            el.textContent = (isTodayPositive ? "+" : "-") + fix(Math.abs(tDeltaSHK) * _egpRate) + " £";
+        } else {
+            el.textContent = (isTodayPositive ? "+" : "-") + fix(Math.abs(tDeltaSHK)) + " ₪";
+        }
         el.style.color = isTodayPositive ? "var(--success)" : "var(--danger)";
     }
     if(document.getElementById("statMonthProfits")) {
         let profEl = document.getElementById("statMonthProfits");
-        profEl.textContent = (isMonthPositive ? "+" : "-") + fix(Math.abs(mDeltaSHK)) + " ₪";
+        if(_isEgypt) {
+            profEl.textContent = (isMonthPositive ? "+" : "-") + fix(Math.abs(mDeltaSHK) * _egpRate) + " £";
+        } else {
+            profEl.textContent = (isMonthPositive ? "+" : "-") + fix(Math.abs(mDeltaSHK)) + " ₪";
+        }
         profEl.style.color = isMonthPositive ? "var(--success)" : "var(--danger)";
     }
 
@@ -7390,9 +7871,10 @@ function refreshHistory(){
         let durBadge = (parsedDur === 0) ? "badge-success" : "badge-warning";
         
         let rowTitle = item.purchaseNotes ? `الملاحظات: ${item.purchaseNotes.replace(/"/g, '&quot;')}` : 'لا يوجد ملاحظات';
-        rows+=`<tr onclick="openEditHistoryModal('${item.id}')" style="cursor:pointer;" title="${rowTitle}"><td>${item.date}</td><td style="${colorStyle}"><b>${esc(item.customer)}</b></td><td style="${colorStyle}">${phoneD}</td><td>${subD}</td><td><span class="badge ${durBadge}">${durStr}</span></td><td style="color:var(--success)">${paidD}</td>${isEmployeeRole ? '' : `<td style="color:var(--danger)">${costD}</td><td>${profitD}</td>`}</tr>`;
+        rows+=`<tr class="history-row" data-histid="${item.id}" style="cursor:pointer;" title="${rowTitle}"><td>${item.date}</td><td style="${colorStyle}"><b>${esc(item.customer)}</b></td><td style="${colorStyle}">${phoneD}</td><td>${subD}</td><td><span class="badge ${durBadge}">${durStr}</span></td><td style="color:var(--success)">${paidD}</td>${isEmployeeRole ? '' : `<td style="color:var(--danger)">${costD}</td><td>${profitD}</td>`}</tr>`;
     });
     document.getElementById("historyBody").innerHTML = rows || `<tr><td colspan='8' style='text-align:center; padding:20px; color:var(--text-muted)'>لا توجد بيانات</td></tr>`;
+    _attachTapHandler(document.getElementById("historyBody"), 'tr.history-row', 'histid', openEditHistoryModal);
 }
 function filterHistory() { refreshHistory(); }
 
@@ -8242,7 +8724,7 @@ function doManualWithdraw() {
     recordBudgetEvent('withdrawal', `سحب أموال: ${amount}${currency} — ${reason}`, deltaUSD, {
         type: 'withdraw', amount, currency, reason
     });
-    logAction(`سحب أموال: ${amount}${currency}`, 'financial', { amount, currency, reason });
+    logAction(`سحب أموال`, 'financial', { type: 'withdraw_store', amount: amount + (currency==='$'?'$':'₪'), currency, reason });
     document.getElementById('withdrawStore').value = '';
     document.getElementById('withdrawReason').value = '';
     notify("تم تسجيل عملية السحب بنجاح");
@@ -9004,11 +9486,16 @@ function openRemoveBuyerModal() {
         list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">لا يوجد عملاء مسجلون في هذا البروفايل</div>';
     } else {
         list.innerHTML = item.buyers.map((b, idx) => `
-            <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-input); border:1px solid var(--border-color); border-radius:10px; padding:10px 14px;">
-                <span style="font-weight:700; font-size:14px;">${idx + 1}. ${esc(b)}</span>
-                <button class="btn btn-danger" style="padding:5px 10px; font-size:12px;" onclick="removeBuyerFromStock('${id}', ${idx})">
-                    <i class="fas fa-trash"></i> حذف
-                </button>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:10px; padding:10px 14px;">
+                <span style="font-weight:700; font-size:14px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${esc(b)}">${idx + 1}. ${esc(b)}</span>
+                <div style="display:flex; gap:6px; flex-shrink:0;">
+                    <button class="btn" style="padding:5px 10px; font-size:12px; background:var(--primary); color:#fff;" onclick="closeRemoveBuyerModal(); openTransferBuyerModal('${id}', ${idx}, true)">
+                        <i class="fas fa-exchange-alt"></i> نقل
+                    </button>
+                    <button class="btn btn-danger" style="padding:5px 10px; font-size:12px;" onclick="removeBuyerFromStock('${id}', ${idx})">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </div>
             </div>
         `).join('');
     }
@@ -9260,6 +9747,360 @@ async function removeBuyerFromStock(stockId, buyerIdx) {
 }
 
 // --- MODIFIED STOCK FUNCTIONS ---
+
+// ════════════════════════════════════════════════════════
+//  حذف عميل من اشتراك مباع — يُقلّص soldProfiles وtotalProfiles معاً
+//  النتيجة: 12/12 ← 11/11 (يبقى الاشتراك مباعاً بالكامل)
+// ════════════════════════════════════════════════════════
+async function removeBuyerFromSoldView(stockId, buyerIdx) {
+    let stock = safeJSON(store.stock, []);
+    let item = stock.find(x => x.id === stockId);
+    if (!item) return;
+
+    let buyerName = (item.buyers && item.buyers[buyerIdx]) ? item.buyers[buyerIdx] : 'العميل';
+
+    let ok = await showConfirm(
+        "حذف عميل من الاشتراك",
+        `هل تريد حذف "${buyerName}" من الاشتراك؟\nسيتم تقليص عدد البروفايلات الكلي بمقعد واحد.`,
+        "حذف", "إلغاء",
+        '<i class="fas fa-user-minus"></i>'
+    );
+    if (!ok) return;
+
+    let idx = stock.findIndex(x => x.id === stockId);
+    if (idx === -1) return notify("لم يُعثر على الاشتراك", "error");
+
+    let removedBuyer = stock[idx].buyers[buyerIdx] || '';
+    stock[idx].buyers.splice(buyerIdx, 1);
+
+    // اشتراك مباع بالكامل: كلا العددين ينقصان → يبقى الاشتراك 11/11
+    stock[idx].soldProfiles  = Math.max(0, (parseInt(stock[idx].soldProfiles)  || 0) - 1);
+    stock[idx].totalProfiles = Math.max(0, (parseInt(stock[idx].totalProfiles) || 0) - 1);
+
+    store.stock = JSON.stringify(stock);
+    fbSave("stock", stock);
+
+    logAction(`حذف عميل من اشتراك مباع: ${stock[idx].displayName || stock[idx].service}`, 'danger', {
+        type: 'remove_buyer_sold',
+        stockName: stock[idx].displayName || stock[idx].service,
+        removedBuyer,
+        remainingProfiles: stock[idx].soldProfiles,
+        totalProfiles: stock[idx].totalProfiles
+    });
+
+    notify("تم حذف العميل");
+    refreshStock();
+
+    // تحديث نافذة العملاء أو إغلاقها
+    let updatedItem = safeJSON(store.stock, []).find(x => x.id === stockId);
+    if (updatedItem && updatedItem.buyers && updatedItem.buyers.length > 0) {
+        openClientsManagerModal(stockId);   // إعادة رسم القائمة
+        viewSoldDetails(stockId);           // تحديث التفاصيل خلف النافذة
+    } else {
+        closeClientsManagerModal();
+        viewSoldDetails(stockId);           // يُحدّث عداد "0 عميل" ويُغلق زر العرض
+    }
+}
+
+// ════════════════════════════════════════════════════════
+//  نافذة إدارة عملاء الاشتراك المباع
+// ════════════════════════════════════════════════════════
+function openClientsManagerModal(stockId) {
+    let stock = safeJSON(store.stock, []);
+    let item  = stock.find(x => x.id === stockId);
+    if (!item) return;
+
+    let isAdmin = currentUser && currentUser.role === 'admin';
+    let buyers  = item.buyers || [];
+    let name    = item.displayName || item.service || '';
+
+    document.getElementById("clientsManagerSubBadge").textContent =
+        name + ` · ${buyers.length} عميل`;
+
+    let list = document.getElementById("clientsManagerList");
+
+    if (buyers.length === 0) {
+        list.innerHTML = `
+            <div style="text-align:center; padding:32px 16px; color:var(--text-muted);">
+                <i class="fas fa-users-slash" style="font-size:32px; margin-bottom:10px; display:block; opacity:.35;"></i>
+                <div style="font-size:14px; font-weight:600;">لا يوجد عملاء مسجّلون</div>
+            </div>`;
+    } else {
+        list.innerHTML = buyers.map((b, idx) => `
+            <div style="display:flex; align-items:center; gap:10px;
+                background:var(--bg-input); border:1px solid var(--border-color);
+                border-radius:12px; padding:11px 13px;
+                transition:border-color .15s;"
+                onmouseover="this.style.borderColor='var(--primary)';"
+                onmouseout="this.style.borderColor='var(--border-color)';">
+
+                <div style="width:34px; height:34px; border-radius:50%; flex-shrink:0;
+                    background:linear-gradient(135deg,var(--primary),#8b5cf6);
+                    color:#fff; font-size:12px; font-weight:800;
+                    display:flex; align-items:center; justify-content:center;">${idx + 1}</div>
+
+                <span style="flex:1; font-size:13.5px; font-weight:700; color:var(--text-main);
+                    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+                    title="${esc(b)}">${esc(b)}</span>
+
+                ${isAdmin ? `
+                <div style="display:flex; gap:6px; flex-shrink:0;">
+                    <button onclick="closeClientsManagerModal(); openTransferBuyerModal('${stockId}', ${idx});"
+                        style="display:inline-flex; align-items:center; gap:5px; padding:6px 11px;
+                        border-radius:8px; border:none; font-size:12px; font-weight:700;
+                        background:rgba(99,102,241,0.12); color:var(--primary);
+                        cursor:pointer; transition:.15s; white-space:nowrap;"
+                        onmouseover="this.style.background='var(--primary)';this.style.color='#fff';"
+                        onmouseout="this.style.background='rgba(99,102,241,0.12)';this.style.color='var(--primary)';">
+                        <i class="fas fa-exchange-alt"></i> نقل
+                    </button>
+                    <button onclick="removeBuyerFromSoldView('${stockId}', ${idx});"
+                        style="display:inline-flex; align-items:center; gap:5px; padding:6px 11px;
+                        border-radius:8px; border:none; font-size:12px; font-weight:700;
+                        background:rgba(239,68,68,0.1); color:var(--danger);
+                        cursor:pointer; transition:.15s; white-space:nowrap;"
+                        onmouseover="this.style.background='var(--danger)';this.style.color='#fff';"
+                        onmouseout="this.style.background='rgba(239,68,68,0.1)';this.style.color='var(--danger)';">
+                        <i class="fas fa-trash-alt"></i> حذف
+                    </button>
+                </div>` : ''}
+            </div>`).join('');
+    }
+
+    document.getElementById("clientsManagerModal").classList.remove("hidden");
+}
+
+function closeClientsManagerModal() {
+    document.getElementById("clientsManagerModal").classList.add("hidden");
+}
+
+// ════════════════════════════════════════════════════════
+//  نظام نقل العميل بين الاشتراكات
+// ════════════════════════════════════════════════════════
+let _transferFromStockId = null;
+let _transferBuyerIdx    = null;
+let _transferAllSubs     = [];
+let _transferFromActive  = false; // هل بدأ النقل من اشتراك نشط (لسا ما انباع)؟
+
+function openTransferBuyerModal(fromStockId, buyerIdx, fromActive = false) {
+    let stock    = safeJSON(store.stock, []);
+    let fromItem = stock.find(x => x.id === fromStockId);
+    if (!fromItem) return;
+
+    _transferFromStockId = fromStockId;
+    _transferBuyerIdx    = buyerIdx;
+    _transferFromActive  = !!fromActive;
+
+    let buyerName = (fromItem.buyers && fromItem.buyers[buyerIdx]) ? fromItem.buyers[buyerIdx] : 'عميل';
+
+    document.getElementById("transferBuyerName").textContent    = buyerName;
+    document.getElementById("transferFromSubName").textContent  = fromItem.displayName || fromItem.service;
+
+    // كل الاشتراكات غير المنتهية ما عدا الحالي
+    _transferAllSubs = stock.filter(s => {
+        if (s.id === fromStockId) return false;
+        let dur = parseInt(s.duration);
+        if (dur === 0) return true; // بدون مدة — لا ينتهي
+        let expiry = _addMonths30(new Date(s.timestamp), dur);
+        return expiry.getTime() > new Date().getTime();
+    });
+
+    document.getElementById("buyerTransferSearch").value = "";
+    renderBuyerTransferList(_transferAllSubs);
+    document.getElementById("buyerTransferPickModal").classList.remove("hidden");
+}
+
+function closeBuyerTransferPickModal() {
+    document.getElementById("buyerTransferPickModal").classList.add("hidden");
+}
+
+function filterBuyerTransferList() {
+    let term     = document.getElementById("buyerTransferSearch").value.toLowerCase();
+    let filtered = _transferAllSubs.filter(s => {
+        let name  = (s.displayName || s.service || '').toLowerCase();
+        let email = (s.email || '').toLowerCase();
+        return name.includes(term) || email.includes(term);
+    });
+    renderBuyerTransferList(filtered);
+}
+
+function renderBuyerTransferList(subs) {
+    let list = document.getElementById("buyerTransferList");
+    if (subs.length === 0) {
+        list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:24px; font-size:13px;"><i class="fas fa-search" style="font-size:24px; margin-bottom:8px; display:block;"></i>لا توجد اشتراكات مطابقة</div>`;
+        return;
+    }
+    list.innerHTML = subs.map(s => {
+        let sold    = parseInt(s.soldProfiles)  || 0;
+        let total   = parseInt(s.totalProfiles) || 1;
+        let avail   = total - sold;
+        let profStr = `${sold}/${total}`;
+        let availBadge = avail > 0
+            ? `<span style="background:rgba(16,185,129,0.15); color:var(--success); padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; white-space:nowrap;">${avail} متاح</span>`
+            : `<span style="background:rgba(239,68,68,0.15); color:var(--danger); padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; white-space:nowrap;">ممتلئ</span>`;
+        return `
+            <div onclick="selectTransferTarget('${s.id}')"
+                style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-input); border:1.5px solid var(--border-color); border-radius:10px; padding:12px 14px; gap:10px; flex-wrap:wrap; cursor:pointer; transition:border-color 0.2s, background 0.2s;"
+                onmouseover="this.style.borderColor='var(--primary)'; this.style.background='rgba(99,102,241,0.04)';"
+                onmouseout="this.style.borderColor='var(--border-color)'; this.style.background='var(--bg-input)';">
+                <div style="flex:1; min-width:0; overflow:hidden;">
+                    <div style="font-weight:800; font-size:14px; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(s.displayName || s.service)}</div>
+                    <div style="font-size:12px; color:var(--text-muted); margin-top:2px; direction:ltr; text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(s.email || '—')}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                    <span class="eng-num" style="font-weight:800; font-size:14px; color:var(--primary);">${profStr}</span>
+                    ${availBadge}
+                </div>
+            </div>`;
+    }).join('');
+}
+
+function selectTransferTarget(toStockId) {
+    let stock    = safeJSON(store.stock, []);
+    let fromItem = stock.find(x => x.id === _transferFromStockId);
+    let toItem   = stock.find(x => x.id === toStockId);
+    if (!fromItem || !toItem) return;
+
+    let buyerName = (fromItem.buyers && fromItem.buyers[_transferBuyerIdx])
+        ? fromItem.buyers[_transferBuyerIdx] : 'عميل';
+
+    // حساب ما قبل وما بعد للمصدر
+    let fromSoldBefore  = parseInt(fromItem.soldProfiles)  || 0;
+    let fromTotalBefore = parseInt(fromItem.totalProfiles) || 1;
+    let isSoldSrc = fromItem.status === 'sold';
+    let fromSoldAfter  = Math.max(0, fromSoldBefore - 1);
+    let fromTotalAfter = isSoldSrc ? Math.max(0, fromTotalBefore - 1) : fromTotalBefore;
+
+    // حساب ما قبل وما بعد للهدف
+    let toSoldBefore  = parseInt(toItem.soldProfiles)  || 0;
+    let toTotalBefore = parseInt(toItem.totalProfiles) || 1;
+    let toAvail       = toTotalBefore - toSoldBefore;
+    let toSoldAfter   = toSoldBefore + 1;
+    let toTotalAfter  = toAvail > 0 ? toTotalBefore : toTotalBefore + 1;
+
+    let isTargetFull = toAvail <= 0;
+
+    document.getElementById("buyerTransferConfirmBody").innerHTML = `
+        <div style="display:grid; gap:10px;">
+            <div style="background:var(--bg-input); border:1px solid var(--border-color); border-radius:10px; padding:13px;">
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px; font-weight:700;"><i class="fas fa-user"></i> العميل المُنقَل</div>
+                <div style="font-size:15px; font-weight:800; color:var(--primary);">${esc(buyerName)}</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div style="background:var(--bg-input); border:1px solid var(--border-color); border-radius:10px; padding:12px;">
+                    <div style="font-size:12px; color:var(--danger); font-weight:800; margin-bottom:6px;"><i class="fas fa-arrow-right"></i> من</div>
+                    <div style="font-size:12px; font-weight:700; color:var(--text-main); margin-bottom:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(fromItem.displayName || fromItem.service)}</div>
+                    <div style="font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; padding:2px 0; border-bottom:1px dashed var(--border-color);"><span>قبل:</span><span class="eng-num" style="font-weight:700;">${fromSoldBefore}/${fromTotalBefore}</span></div>
+                    <div style="font-size:12px; color:var(--danger); display:flex; justify-content:space-between; padding:2px 0;"><span>بعد:</span><span class="eng-num" style="font-weight:800;">${fromSoldAfter}/${fromTotalAfter}</span></div>
+                </div>
+                <div style="background:var(--bg-input); border:1px solid var(--border-color); border-radius:10px; padding:12px;">
+                    <div style="font-size:12px; color:var(--success); font-weight:800; margin-bottom:6px;"><i class="fas fa-arrow-left"></i> إلى</div>
+                    <div style="font-size:12px; font-weight:700; color:var(--text-main); margin-bottom:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(toItem.displayName || toItem.service)}</div>
+                    <div style="font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; padding:2px 0; border-bottom:1px dashed var(--border-color);"><span>قبل:</span><span class="eng-num" style="font-weight:700;">${toSoldBefore}/${toTotalBefore}</span></div>
+                    <div style="font-size:12px; color:var(--success); display:flex; justify-content:space-between; padding:2px 0;"><span>بعد:</span><span class="eng-num" style="font-weight:800;">${toSoldAfter}/${toTotalAfter}</span></div>
+                </div>
+            </div>
+            ${isTargetFull ? `<div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4); border-radius:8px; padding:10px 12px; font-size:12px; color:#d97706;"><i class="fas fa-exclamation-triangle"></i> الاشتراك الهدف ممتلئ — سيتم إضافة مقعد تلقائياً لاستيعاب العميل</div>` : ''}
+        </div>`;
+
+    document.getElementById("buyerTransferConfirmOkBtn").onclick = () => executeBuyerTransfer(toStockId);
+    closeBuyerTransferPickModal();
+    document.getElementById("buyerTransferConfirmModal").classList.remove("hidden");
+}
+
+function closeBuyerTransferConfirmModal() {
+    document.getElementById("buyerTransferConfirmModal").classList.add("hidden");
+}
+
+async function executeBuyerTransfer(toStockId) {
+    let stock   = safeJSON(store.stock, []);
+    let fromIdx = stock.findIndex(x => x.id === _transferFromStockId);
+    let toIdx   = stock.findIndex(x => x.id === toStockId);
+    if (fromIdx === -1) return notify("لم يُعثر على الاشتراك المصدر", "error");
+    if (toIdx   === -1) return notify("لم يُعثر على الاشتراك الهدف",  "error");
+
+    let buyerName = (stock[fromIdx].buyers && stock[fromIdx].buyers[_transferBuyerIdx])
+        ? stock[fromIdx].buyers[_transferBuyerIdx] : 'عميل';
+
+    // ── إزالة من المصدر ──────────────────────────────────────────
+    stock[fromIdx].buyers.splice(_transferBuyerIdx, 1);
+    let isSoldSrc = stock[fromIdx].status === 'sold';
+    if (isSoldSrc) {
+        // اشتراك مباع بالكامل → كلاهما ينقصان (12/12 → 11/11)
+        stock[fromIdx].soldProfiles  = Math.max(0, (parseInt(stock[fromIdx].soldProfiles)  || 0) - 1);
+        stock[fromIdx].totalProfiles = Math.max(0, (parseInt(stock[fromIdx].totalProfiles) || 0) - 1);
+    } else {
+        // اشتراك نشط → فقط soldProfiles ينقص (مقعد يتحرر)
+        stock[fromIdx].soldProfiles = Math.max(0, (parseInt(stock[fromIdx].soldProfiles) || 0) - 1);
+        if (stock[fromIdx].status === 'sold' && stock[fromIdx].soldProfiles < (parseInt(stock[fromIdx].totalProfiles) || 1)) {
+            stock[fromIdx].status = 'active';
+            delete stock[fromIdx].soldDate;
+        }
+    }
+
+    // ── إضافة إلى الهدف ──────────────────────────────────────────
+    if (!stock[toIdx].buyers) stock[toIdx].buyers = [];
+    stock[toIdx].buyers.push(buyerName);
+
+    let toAvail = (parseInt(stock[toIdx].totalProfiles) || 1) - (parseInt(stock[toIdx].soldProfiles) || 0);
+    if (toAvail <= 0) {
+        // ممتلئ → نزيد التوتال بمقعد واحد لاستيعاب العميل
+        stock[toIdx].totalProfiles = (parseInt(stock[toIdx].totalProfiles) || 1) + 1;
+    }
+    stock[toIdx].soldProfiles = (parseInt(stock[toIdx].soldProfiles) || 0) + 1;
+
+    // هل امتلأ الهدف الآن؟ → نحوّله لـ sold
+    if (stock[toIdx].soldProfiles >= (parseInt(stock[toIdx].totalProfiles) || 1)) {
+        stock[toIdx].status = 'sold';
+        let nd = new Date();
+        stock[toIdx].soldDate = `${nd.getFullYear()}-${String(nd.getMonth()+1).padStart(2,'0')}-${String(nd.getDate()).padStart(2,'0')}`;
+    }
+
+    let savedStockStr = JSON.stringify(stock);
+    store.stock = savedStockStr;
+    fbSave("stock", stock);
+
+    logAction(`نقل عميل بين الاشتراكات: ${buyerName}`, 'general', {
+        type: 'transfer_buyer',
+        buyerName,
+        fromStock: stock[fromIdx].displayName || stock[fromIdx].service,
+        toStock:   stock[toIdx].displayName   || stock[toIdx].service
+    });
+
+    closeBuyerTransferConfirmModal();
+    notify("✅ تم نقل العميل بنجاح");
+    refreshStock();
+
+    // تحديث الواجهة خلف النافذة حسب مصدر النقل
+    let _srcId       = _transferFromStockId;
+    let _wasActive   = _transferFromActive;
+    let savedStock   = safeJSON(store.stock, []);
+    let fromUpdated  = savedStock.find(x => x.id === _srcId);
+    let _stillHasBuyers = !!(fromUpdated && fromUpdated.buyers && fromUpdated.buyers.length > 0);
+
+    if (_wasActive) {
+        // المصدر اشتراك نشط (لسا ما انباع) — حدّث نافذة المخزون المفتوحة وأعد فتح قائمة العملاء إن بقي عملاء
+        let isAdmin = currentUser && currentUser.role === 'admin';
+        let btnRem = document.getElementById("btnRemoveBuyer");
+        if (fromUpdated && isAdmin) renderStProfilesAdjust(fromUpdated);
+        if (_stillHasBuyers) {
+            if (btnRem && isAdmin) btnRem.classList.remove("hidden");
+            openRemoveBuyerModal(); // يقرأ stockIndexId الحالي ويعيد رسم القائمة محدّثة
+        } else if (btnRem) {
+            btnRem.classList.add("hidden");
+        }
+    } else {
+        // المصدر اشتراك مباع — السلوك الأصلي
+        viewSoldDetails(_srcId);
+        if (_stillHasBuyers) {
+            openClientsManagerModal(_srcId);
+        }
+    }
+
+    _transferFromStockId = null;
+    _transferBuyerIdx    = null;
+    _transferFromActive  = false;
+}
 
 function openAddStockModal() {
     loadServices();
@@ -9787,7 +10628,7 @@ function adjustStockProfiles(delta) {
     // مزامنة الواجهة
     document.getElementById("stProfiles").value = newTotal;
     renderStProfilesAdjust(item);
-    logAction(`تعديل عدد البروفايلات: ${item.displayName || item.service} (${total} ← ${newTotal})`, 'general', {
+    logAction(`تعديل عدد البروفايلات: ${item.displayName || item.service}`, 'general', {
         type: 'adjust_profiles', stockName: item.displayName || item.service, before: total, after: newTotal, soldProfiles: sold
     });
     refreshStock(); loadPurchaseStock();
@@ -9798,10 +10639,12 @@ function viewSoldDetails(id) {
     let stock = safeJSON(store.stock, []);
     let item = stock.find(x => x.id === id);
     if(!item) return;
-    
+
+    let isAdmin = currentUser && currentUser.role === 'admin';
     let body = document.getElementById("modalBody");
     body.innerHTML = "";
-    
+
+    // ── معلومات الاشتراك ──────────────────────────────────────
     body.innerHTML += row("الخدمة", esc(item.displayName || item.service));
     body.innerHTML += `<div class="detail-row"><span style="color:var(--text-muted)">الإيميل</span><span style="display:flex;align-items:center;gap:8px;direction:ltr;"><span id="_dEmail">${esc(item.email)}</span><button class="btn btn-primary" style="padding:3px 8px;font-size:11px;" onclick="navigator.clipboard.writeText(document.getElementById('_dEmail').textContent).then(()=>notify('تم نسخ الإيميل'))"><i class='fas fa-copy'></i></button></span></div>`;
     body.innerHTML += `<div class="detail-row"><span style="color:var(--text-muted)">كلمة المرور</span><span style="display:flex;align-items:center;gap:8px;direction:ltr;"><span id="_dPass">${esc(item.pass)}</span><button class="btn btn-primary" style="padding:3px 8px;font-size:11px;" onclick="navigator.clipboard.writeText(document.getElementById('_dPass').textContent).then(()=>notify('تم نسخ كلمة المرور'))"><i class='fas fa-copy'></i></button></span></div>`;
@@ -9810,24 +10653,28 @@ function viewSoldDetails(id) {
     if(!currentUser || currentUser.role !== 'employee') body.innerHTML += row("تكلفة الشراء", (item.cost || 0) + " " + (item.costCurrency || ''));
     body.innerHTML += `<hr style="margin:10px 0; border:0; border-top:1px dashed var(--border-color)">`;
     body.innerHTML += row("تاريخ البيع", item.soldDate);
-    
-    let buyersHtml = "";
-    if(item.buyers && item.buyers.length > 0) {
-        buyersHtml = item.buyers.map((b, idx) => `<div style="padding:8px 0; border-bottom:1px solid var(--border-color);">${idx+1}. ${esc(b)}</div>`).join('');
-    } else {
-        buyersHtml = "مباشر (يدوي)";
+
+    // ── ملاحظات ───────────────────────────────────────────────
+    if (item.notes) {
+        body.innerHTML += `<div style="margin-top:10px; background:var(--bg-input); padding:10px 12px; border-radius:8px; font-size:13px; color:var(--text-muted);"><b style="color:var(--text-main);">ملاحظات:</b> ${esc(item.notes)}</div>`;
     }
-    
-    body.innerHTML += `<div class="detail-row" style="flex-direction:column; align-items:flex-start;">
-        <span class="detail-label" style="margin-bottom:8px;">قائمة العملاء (المشترين):</span>
-        <div style="background:var(--bg-input); width:100%; padding:10px; border-radius:8px; font-weight:bold; color:var(--primary);">${buyersHtml}</div>
-    </div>`;
 
-    body.innerHTML += `<div style="margin-top:10px; background:var(--bg-input); padding:10px; border-radius:8px; font-size:13px;"><b>ملاحظات:</b><br>${esc(item.notes)||'لا يوجد'}</div>`;
+    // ── العملاء + أزرار المدير ────────────────────────────────
+    let hasBuyers = item.buyers && item.buyers.length > 0;
 
-    // زر إرجاع الاشتراك المُباع (للمدير فقط) — يضيف مقعد بروفايل إضافي ويعيده للنشط
-    if (currentUser && currentUser.role === 'admin') {
-        body.innerHTML += `<button class="btn" style="width:100%; margin-top:14px; background:var(--accent); color:#fff;" onclick="returnSoldStock('${item.id}')"><i class="fas fa-rotate-left"></i> إرجاع الاشتراك (إضافة مقعد بروفايل)</button>`;
+    if (!hasBuyers) {
+        body.innerHTML += row("العملاء", "مباشر (يدوي)");
+    }
+
+    if (isAdmin) {
+        let btns = `<div style="margin-top:14px; display:flex; flex-direction:column; gap:8px;">`;
+        if (hasBuyers) {
+            let cnt = item.buyers.length;
+            btns += `<button onclick="openClientsManagerModal('${id}')" style="width:100%;padding:12px 16px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--primary),#8b5cf6);color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(99,102,241,0.28);transition:opacity .18s;" onmouseover="this.style.opacity='.86';" onmouseout="this.style.opacity='1';"><i class="fas fa-users"></i> عرض العملاء <span style="background:rgba(255,255,255,0.22);padding:1px 8px;border-radius:20px;font-size:12px;font-weight:800;">${cnt}</span></button>`;
+        }
+        btns += `<button onclick="returnSoldStock('${item.id}')" style="width:100%;padding:12px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="fas fa-rotate-left"></i> إرجاع الاشتراك (إضافة مقعد بروفايل)</button>`;
+        btns += `</div>`;
+        body.innerHTML += btns;
     }
 
     document.getElementById("detailsModal").classList.remove("hidden");
@@ -9860,7 +10707,7 @@ async function returnSoldStock(id) {
     store.stock = JSON.stringify(stock);
     fbSave("stock", stock);
 
-    logAction(`إرجاع اشتراك مُباع: ${item.displayName || item.service} (${sold}/${total} ← ${sold}/${total + 1})`, 'general', {
+    logAction(`إرجاع اشتراك مُباع: ${item.displayName || item.service}`, 'general', {
         type: 'return_sold_stock', stockName: item.displayName || item.service, soldProfiles: sold, beforeTotal: total, afterTotal: total + 1
     });
 
@@ -9886,27 +10733,50 @@ async function sellStock(id) {
     let index = stock.findIndex(x => x.id === id);
     if(index === -1) return;
     let item = stock[index];
-    
-    let customerNum = await showPrompt("إتمام البيع يدوياً", `تسجيل بيع لاشتراك: ${esc(item.displayName || item.service)}`, "أدخل اسم/رقم العميل (اختياري)", '<i class="fas fa-shopping-cart"></i>');
-    if (customerNum === null) return; 
 
-    let buyerInfo = customerNum ? `تسجيل يدوي: ${customerNum}` : "مباشر (يدوي)";
-    if(!item.buyers) item.buyers = [];
-    item.buyers.push(buyerInfo);
+    let used  = parseInt(item.soldProfiles)  || 0;   // البروفايلات المستخدمة حالياً
+    let total = parseInt(item.totalProfiles) || 1;
+    let name  = item.displayName || item.service || 'الاشتراك';
 
-    item.soldProfiles = item.totalProfiles || 1;
+    // العدد بعد البيع يعتمد البروفايلات المستخدمة حالياً وتُحذف الفارغة (5/10 → 5/5)
+    // إن لم يُستخدم أي بروفايل، يُسجَّل البيع كمقعد واحد مباشر
+    let finalCount = used >= 1 ? used : 1;
+    let detailLine = used >= 1
+        ? `سيتم اعتماد البروفايلات المستخدمة حالياً (${used}/${total}) وحذف البروفايلات الفارغة. النتيجة بعد البيع: ${finalCount}/${finalCount}.`
+        : `لا يوجد بروفايلات مستخدمة حالياً — سيُسجَّل البيع كبروفايل واحد مباشر. النتيجة بعد البيع: 1/1.`;
+
+    // نافذة تأكيد فقط (بدون طلب بيانات العميل)
+    let ok = await showConfirm(
+        "تأكيد البيع اليدوي",
+        `هل تريد بيع اشتراك "${name}" ونقله إلى المباع؟ ${detailLine}`,
+        "تأكيد البيع", "إلغاء",
+        '<i class="fas fa-check-circle"></i>'
+    );
+    if (!ok) return;
+
+    if (!item.buyers) item.buyers = [];
+    if (used < 1) {
+        // لا مشتركين — أضف مقعداً مباشراً واحداً
+        item.buyers.push("مباشر (يدوي)");
+        item.soldProfiles  = 1;
+        item.totalProfiles = 1;
+    } else {
+        // اعتمد المستخدم حالياً واحذف الفارغة
+        item.soldProfiles  = used;
+        item.totalProfiles = used;
+    }
     item.remainingCost = 0; // البيع اليدوي يستهلك كل المخزون → لا رصيد تكلفة متبقٍّ
     item.status = 'sold';
-    
+
     let nd = new Date();
     let nmm = (nd.getMonth()+1).toString().padStart(2,'0');
     let ndd = nd.getDate().toString().padStart(2,'0');
     item.soldDate = `${nd.getFullYear()}-${nmm}-${ndd}`;
-    
+
     stock[index] = item;
     store.stock = JSON.stringify(stock); fbSave("stock", stock);
-    
-    logAction(`تم بيع اشتراك من المخزون يدوياً: ${item.displayName || item.service}`, 'financial', { type: 'manual_sell', stockName: item.displayName || item.service, buyer: buyerInfo, soldDate: item.soldDate, vendor: item.vendor || '', totalProfiles: item.totalProfiles });
+
+    logAction(`تم بيع اشتراك من المخزون يدوياً: ${name}`, 'financial', { type: 'manual_sell', stockName: name, soldDate: item.soldDate, vendor: item.vendor || '', soldProfiles: item.soldProfiles, totalProfiles: item.totalProfiles });
     refreshStock(); loadPurchaseStock();  notify("تم نقل الاشتراك إلى المباع");
 }
 
@@ -10708,7 +11578,7 @@ async function executeConfirmBooking() {
 
         document.getElementById("confirmBookingModal").style.display = "none";
         notify("تم تأكيد الحجز وإيداع الأموال بنجاح", "success");
-        logAction(`تأكيد حجز: ${order?.serviceName || ''} - ${amount}${paidCur}`, "financial", {
+        logAction(`تأكيد حجز: ${order?.serviceName || ''}`, "financial", {
             type: 'booking_confirm', serviceName: order?.serviceName||'', customerName: customerName_cb, customerPhone: customerPhone_cb, amount, paidCur
         });
         let settings_rate = safeJSON(store.settings, {}); let rate_cb = settings_rate.exchangeRate > 0 ? settings_rate.exchangeRate : 3.5;
@@ -11250,7 +12120,8 @@ function updateDiscountBadge() {
 // ميزة 4: تصدير الأرشيف المالي كـ CSV
 // ─────────────────────────────────────────────
 function exportHistoryCSV() {
-    if (currentUser && (currentUser.role === 'viewer' || currentUser.role === 'viewer_plus')) return notify("ليس لديك صلاحية", "error");
+    // التصدير للأدمن فقط
+    if (!currentUser || currentUser.role !== 'admin') return notify("للأدمن فقط", "error");
     let p = safeJSON(store.purchases, []);
     let v = document.getElementById("historySearch").value.toLowerCase();
     let fromDate = document.getElementById("historyFromDate") ? document.getElementById("historyFromDate").value : "";
@@ -11261,21 +12132,51 @@ function exportHistoryCSV() {
         let matchesFrom = !fromDate || (item.date && item.date >= fromDate);
         let matchesTo = !toDate || (item.date && item.date <= toDate);
         return matchesSearch && matchesFrom && matchesTo;
+    }).sort((a, b) => {
+        let dateComp = (b.date || '').localeCompare(a.date || '');
+        if (dateComp !== 0) return dateComp;
+        let tsA = a.id ? parseInt(a.id.split('_')[1]) || 0 : 0;
+        let tsB = b.id ? parseInt(b.id.split('_')[1]) || 0 : 0;
+        return tsB - tsA;
     });
 
     if (filtered.length === 0) return notify("لا توجد بيانات للتصدير", "error");
 
-    const headers = ["التاريخ", "العميل", "الجوال", "الخدمة", "المدة", "المدفوع", "التكلفة", "المحفظة"];
-    const rows = filtered.map(item => [
-        item.date || '',
-        item.customer || '',
-        item.phone || '',
-        item.sub || '',
-        parseInt(item.duration) === 0 ? 'بدون مدة' : (item.duration || '') + ' شهر',
-        item.paid || '',
-        item.cost || '',
-        item.wallet || ''
-    ]);
+    // ─── حساب الربح لكل عملية بنفس منطق جدول السجل المالي ───
+    let _sCsv = safeJSON(store.settings, {});
+    function _calcProfit(item) {
+        let rate = (item.rate && item.rate > 0) ? item.rate : (_sCsv.exchangeRate && _sCsv.exchangeRate > 0 ? _sCsv.exchangeRate : 3.5);
+        let paidNum = parseFloat((item.paid || '0').replace(/[^0-9.\-]/g, '')) || 0;
+        let paidCur = (item.paid || '').replace(/[0-9.\-\s]/g, '').trim() || '₪';
+        let costNum = parseFloat((item.cost || '0').replace(/[^0-9.\-]/g, '')) || 0;
+        let costCur = (item.cost || '').replace(/[0-9.\-\s]/g, '').trim() || '₪';
+        let costInPaid = costNum;
+        if (paidCur !== costCur) {
+            if (paidCur === '$' && costCur === '₪') costInPaid = costNum / rate;
+            else if (paidCur === '₪' && costCur === '$') costInPaid = costNum * rate;
+        }
+        let profit = paidNum - costInPaid;
+        return (profit >= 0 ? '+' : '') + profit.toFixed(2) + paidCur;
+    }
+
+    // الحقول المطابقة تماماً لما يظهر في جدول السجل المالي (بدون حقول وهمية كالمحفظة)
+    const headers = ["التاريخ", "العميل", "الجوال", "الخدمة", "عدد البروفايلات", "المدة", "المدفوع", "التكلفة", "الربح", "نوع العملية", "ملاحظات"];
+    const rows = filtered.map(item => {
+        let opType = item.isComp ? "تعويض" : (item.isPledge ? "رهن" : "بيع");
+        return [
+            item.date || '',
+            item.customer || '',
+            item.phone || '',
+            item.sub || '',
+            parseInt(item.profilesCount) || 1,
+            parseInt(item.duration) === 0 ? 'بدون مدة' : (item.duration || '') + ' شهر',
+            item.paid || '',
+            item.cost || '',
+            _calcProfit(item),
+            opType,
+            item.purchaseNotes || ''
+        ];
+    });
 
     let csvContent = '\uFEFF' + [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
     let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -11589,9 +12490,12 @@ function refreshPledges() {
 async function deletePledge(id) {
     let ok = await showConfirm("حذف الرهن", "هل أنت متأكد من حذف هذا الرهن نهائياً؟", "حذف", "إلغاء", '<i class="fas fa-trash-alt"></i>');
     if(!ok) return;
-    let pledges = safeJSON(store.pledges, []).filter(p => p.id !== id);
+    let _allPledges = safeJSON(store.pledges, []);
+    let _deleted = _allPledges.find(p => p.id === id);
+    let pledges = _allPledges.filter(p => p.id !== id);
     store.pledges = JSON.stringify(pledges);
     fbSave("pledges", pledges);
+    logAction(`حذف رهن العميل ${_deleted?.customer || ''}`, 'danger', { type: 'delete_pledge', customer: _deleted?.customer || '', phone: _deleted?.phone || '', service: _deleted?.service || '', usedCount: _deleted?.usedCount || 0, totalCount: _deleted?.totalCount || 0 });
     refreshPledges();
     loadPledgesIntoSelect();
     notify("تم الحذف");
@@ -11601,8 +12505,10 @@ async function deleteAllPledges() {
     if(currentUser.role !== 'admin') return notify("للأدمن فقط", "error");
     let ok = await showConfirm("مسح المرهونات", "هل أنت متأكد من مسح جميع المرهونات؟", "مسح الكل", "إلغاء", '<i class="fas fa-trash-alt"></i>');
     if(!ok) return;
+    let _cnt = safeJSON(store.pledges, []).length;
     store.pledges = "[]";
     fbSave("pledges", []);
+    logAction("مسح جميع المرهونات", 'danger', { type: 'delete_all_pledges', count: _cnt });
     refreshPledges();
     loadPledgesIntoSelect();
     notify("تم مسح جميع المرهونات");
@@ -11642,18 +12548,83 @@ window._userCountry = null;
 // ─────────────────────────────────────────
 // زيادة راتب الموظف
 // ─────────────────────────────────────────
-function _getEmpBonusStore() {
+// بنية التخزين الجديدة: { months: { "YYYY-MM": مبلغ, ... } }
+// (تُهاجَر تلقائياً من البنية القديمة { month, totalShekels })
+function _curMonthKey() { return new Date().toISOString().slice(0,7); } // "YYYY-MM"
+
+function _getEmpBonusRoot() {
     let raw = safeJSON(store.employeeBonus, null);
-    let curMonth = new Date().toISOString().slice(0,7); // "YYYY-MM"
-    if (!raw || raw.month !== curMonth) {
-        return { month: curMonth, totalShekels: 0 };
+    if (!raw || typeof raw !== 'object') return { months: {} };
+    // هجرة البنية القديمة إلى الجديدة (مرة واحدة، آمنة للتكرار)
+    if (!raw.months) {
+        let migrated = { months: {} };
+        if (raw.month && typeof raw.totalShekels === 'number') {
+            migrated.months[raw.month] = +raw.totalShekels.toFixed(4);
+        }
+        return migrated;
     }
     return raw;
 }
 
-function _saveEmpBonus(obj) {
-    store.employeeBonus = JSON.stringify(obj);
-    fbSave('employeeBonus', obj);
+function _getEmpBonusForMonth(monthKey) {
+    let root = _getEmpBonusRoot();
+    return +((root.months[monthKey] || 0)).toFixed(4);
+}
+
+function _saveEmpBonusRoot(root) {
+    store.employeeBonus = JSON.stringify(root);
+    fbSave('employeeBonus', root);
+}
+
+function _setEmpBonusForMonth(monthKey, value) {
+    let root = _getEmpBonusRoot();
+    root.months[monthKey] = +value.toFixed(4);
+    _saveEmpBonusRoot(root);
+}
+
+// إعدادات شرائح العمولة (يتحكم بها الأدمن)
+// النموذج الجديد: مصفوفة من { startSale: بداية العملية, pct: النسبة } مرتبة تصاعدياً.
+// كل شريحة تمتد من startSale حتى (بداية الشريحة التالية − 1)، والأخيرة "فأكثر".
+// العمليات قبل بداية أول شريحة = بدون عمولة تلقائياً.
+function _getEmpBonusTiers() {
+    let s = safeJSON(store.settings, {});
+    let t = s.empBonusTiers;
+    if (Array.isArray(t) && t.length >= 1) {
+        // النموذج الجديد (فيه startSale)
+        if (t[0] && t[0].startSale !== undefined) {
+            return t.map(x => ({ startSale: parseInt(x.startSale), pct: parseFloat(x.pct) }))
+                    .filter(x => !isNaN(x.startSale) && !isNaN(x.pct))
+                    .sort((a,b) => a.startSale - b.startSale);
+        }
+        // هجرة النموذج القديم { fromSale, toSale, pct } → { startSale, pct }
+        if (t[0] && t[0].fromSale !== undefined) {
+            return t.map(x => ({ startSale: parseInt(x.fromSale), pct: parseFloat(x.pct) }))
+                    .filter(x => !isNaN(x.startSale) && !isNaN(x.pct))
+                    .sort((a,b) => a.startSale - b.startSale);
+        }
+    }
+    // الافتراضي المطابق للنظام القديم: 8–11 => 15%، 12 فأكثر => 20%
+    return [
+        { startSale: 8,  pct: 15 },
+        { startSale: 12, pct: 20 }
+    ];
+}
+
+// الشهر المعروض حالياً في صندوق سحب الأموال (افتراضياً الشهر الحالي)
+let _empBonusViewMonth = _curMonthKey();
+
+// إزاحة مفتاح شهر بمقدار delta (±1) وإرجاع "YYYY-MM"
+function _shiftMonthKey(monthKey, delta) {
+    let [y, m] = monthKey.split('-').map(Number);
+    let d = new Date(y, (m - 1) + delta, 1);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+}
+
+// اسم الشهر بالعربي من مفتاح "YYYY-MM"
+function _monthLabelAr(monthKey) {
+    const names = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    let [y, m] = monthKey.split('-').map(Number);
+    return (names[m-1] || monthKey) + ' ' + y;
 }
 
 function refreshEmployeeBonus() {
@@ -11666,25 +12637,75 @@ function refreshEmployeeBonus() {
 
     // صندوق تعديل راتب الموظف (في صفحة سحب الأموال) — للأدمن وفقط عند وجود موظفين
     let _adminBox = document.getElementById('empBonusAdminBox');
+    let _isAdminNow = currentUser && currentUser.role === 'admin';
     if (_adminBox) {
-        let _isAdminNow = currentUser && currentUser.role === 'admin';
         if (_isAdminNow && _hasEmployees) _adminBox.classList.remove('hidden');
         else _adminBox.classList.add('hidden');
+    }
+    // بطاقة عرض الزيادة الشهرية مع التنقل — للأدمن فقط وعند وجود موظفين
+    let _monthCard = document.getElementById('empBonusMonthCard');
+    if (_monthCard) {
+        if (_isAdminNow && _hasEmployees) _monthCard.classList.remove('hidden');
+        else _monthCard.classList.add('hidden');
     }
     // بطاقة "زيادة الراتب" في لوحة الإحصائيات العلوية — تختفي عند عدم وجود موظفين
     let _statCard = document.getElementById('statCardEmployeeBonus');
     if (_statCard && !_hasEmployees) _statCard.classList.add('hidden');
 
-    let bonus = _getEmpBonusStore();
     let settings = safeJSON(store.settings, {});
-    let displayVal = '+' + fix(bonus.totalShekels) + ' ₪';
-    if (bonus.totalShekels < 0) displayVal = displayVal.replace('+', '');
+    let egpRate = (settings.egpRate && settings.egpRate > 0) ? settings.egpRate : 13;
+    let isEgypt = window._userCountry === 'EG';
 
+    // دالة تنسيق مبلغ بالعملة المناسبة
+    const _fmtBonus = (shekels) => {
+        let v = isEgypt ? '+' + fix(shekels * egpRate) + ' £' : '+' + fix(shekels) + ' ₪';
+        if (shekels < 0) v = v.replace('+', '');
+        return v;
+    };
+
+    // القيمة العلوية (البطاقة الإحصائية) = الشهر الحالي دائماً
+    let curVal = _getEmpBonusForMonth(_curMonthKey());
     let empEl = document.getElementById('statEmployeeBonus');
-    if (empEl) empEl.textContent = displayVal;
+    if (empEl) empEl.textContent = _fmtBonus(curVal);
 
+    // القيمة اليدوية القديمة (لو ظلّت) = الشهر الحالي
     let adminEl = document.getElementById('empBonusAdminValue');
-    if (adminEl) adminEl.textContent = displayVal;
+    if (adminEl) adminEl.textContent = _fmtBonus(curVal);
+
+    // ── بطاقة الشهر القابلة للتنقل ──
+    // تأكد أن الشهر المعروض غير فارغ إلا إذا كان الشهر الحالي
+    let monthVal = _getEmpBonusForMonth(_empBonusViewMonth);
+    let monthValEl = document.getElementById('empBonusMonthValue');
+    if (monthValEl) monthValEl.textContent = _fmtBonus(monthVal);
+    let monthLabelEl = document.getElementById('empBonusMonthLabel');
+    if (monthLabelEl) monthLabelEl.textContent = _monthLabelAr(_empBonusViewMonth);
+
+    // أزرار التنقل: يُفعّل زر الشهر السابق/التالي فقط إذا كان لذلك الشهر قيمة > 0
+    let prevKey = _shiftMonthKey(_empBonusViewMonth, -1);
+    let nextKey = _shiftMonthKey(_empBonusViewMonth, +1);
+    let prevBtn = document.getElementById('empBonusPrevBtn');
+    let nextBtn = document.getElementById('empBonusNextBtn');
+    if (prevBtn) {
+        let has = _getEmpBonusForMonth(prevKey) > 0;
+        prevBtn.disabled = !has;
+        prevBtn.style.opacity = has ? '1' : '0.3';
+        prevBtn.style.cursor = has ? 'pointer' : 'not-allowed';
+    }
+    if (nextBtn) {
+        let has = _getEmpBonusForMonth(nextKey) > 0;
+        nextBtn.disabled = !has;
+        nextBtn.style.opacity = has ? '1' : '0.3';
+        nextBtn.style.cursor = has ? 'pointer' : 'not-allowed';
+    }
+}
+
+// التنقل بين شهور الزيادة (يُستدعى من أزرار الأسهم)
+function empBonusNavMonth(delta) {
+    let target = _shiftMonthKey(_empBonusViewMonth, delta);
+    // لا ننتقل إلا إذا كان للشهر الهدف قيمة > 0
+    if (_getEmpBonusForMonth(target) <= 0) return;
+    _empBonusViewMonth = target;
+    refreshEmployeeBonus();
 }
 
 function calculateEmployeeBonusForSale(profitShekels, purchases) {
@@ -11693,18 +12714,23 @@ function calculateEmployeeBonusForSale(profitShekels, purchases) {
     let todaySales = purchases.filter(p =>
         p.date === today && !p.isComp && !p.isPledge && !p.pledgeId
     );
-    let saleIndex = todaySales.length - 1; // الرقم التسلسلي للبيعة الحالية
+    let saleNumber = todaySales.length; // ترتيب البيعة الحالية (1 = أول عملية اليوم)
 
+    // تحديد النسبة حسب شرائح الأدمن (نموذج نقاط البداية)
+    // نأخذ أعلى شريحة تكون بدايتها ≤ رقم العملية الحالية
+    let tiers = _getEmpBonusTiers(); // مرتبة تصاعدياً حسب startSale
     let bonusPct = 0;
-    if (saleIndex >= 11) bonusPct = 0.20;
-    else if (saleIndex >= 7) bonusPct = 0.15;
+    for (let t of tiers) {
+        if (saleNumber >= t.startSale) bonusPct = (t.pct || 0) / 100;
+        else break; // الشرائح مرتبة، فأول واحدة بدايتها أكبر توقفنا
+    }
 
     if (bonusPct === 0 || profitShekels <= 0) return;
 
     let bonusAmount = +(profitShekels * bonusPct).toFixed(4);
-    let obj = _getEmpBonusStore();
-    obj.totalShekels = +((obj.totalShekels || 0) + bonusAmount).toFixed(4);
-    _saveEmpBonus(obj);
+    let mk = _curMonthKey();
+    let cur = _getEmpBonusForMonth(mk);
+    _setEmpBonusForMonth(mk, cur + bonusAmount);
     refreshEmployeeBonus();
 }
 
@@ -11712,11 +12738,18 @@ function adjustEmployeeBonus() {
     if (!currentUser || currentUser.role !== 'admin') return notify('للأدمن فقط', 'error');
     let val = parseFloat(document.getElementById('empBonusAdjust').value);
     if (isNaN(val) || val === 0) return notify('أدخل قيمة صحيحة', 'error');
-    let obj = _getEmpBonusStore();
-    obj.totalShekels = +((obj.totalShekels || 0) + val).toFixed(4);
-    _saveEmpBonus(obj);
+    // التعديل يُطبَّق على الشهر المعروض حالياً في البطاقة
+    let mk = _empBonusViewMonth || _curMonthKey();
+    let _before = _getEmpBonusForMonth(mk);
+    let _after = +(_before + val).toFixed(4);
+    _setEmpBonusForMonth(mk, _after);
     document.getElementById('empBonusAdjust').value = '';
     refreshEmployeeBonus();
+    logAction(
+        val > 0 ? `زيادة يدوية على راتب الموظف` : `خصم يدوي من راتب الموظف`,
+        'financial',
+        { type: 'adjust_emp_bonus', operation: val > 0 ? 'إضافة' : 'خصم', amount: Math.abs(val) + ' ₪', before: _before + ' ₪', after: _after + ' ₪', month: _monthLabelAr(mk) }
+    );
     notify(val > 0 ? `تمت إضافة ${val} ₪ لزيادة الراتب` : `تم خصم ${Math.abs(val)} ₪ من زيادة الراتب`);
 }
 
@@ -11878,8 +12911,13 @@ function _initChatKeyboardFix() {
 const CHAT_PAGE_SIZE    = 100;
 const CHAT_MAX_CHARS    = 5000;
 const CHAT_TYPING_TTL   = 4000;
+const CHAT_INACTIVITY   = 5 * 60 * 1000;
 const PRESENCE_INTERVAL = 30 * 1000;
 const ONLINE_THRESHOLD  = 90 * 1000;
+const TG_BOT_TOKEN      = '8947412310:AAGCLqjQze3Au34D273ACd7F2tQxVrFVBMY';
+const TG_API            = 'https://api.telegram.org/bot' + TG_BOT_TOKEN;
+const TG_FIXED_CHAT_ID  = '7236270424';
+const TG_NOTIFY_DELAY   = 4000;
 
 let _chatFeatureEnabled   = false;
 let _chatMsgMap           = new Map();
@@ -11908,6 +12946,12 @@ let _chatTitleBase        = null;
 let _chatTypingInterval   = null;
 let _chatInactivityTimer  = null;
 let _chatPresenceTimer    = null;
+let _tgMyPrefs            = { enabled: false, showContent: false };
+let _tgRecipients         = {};
+let _tgPrefsListener      = null;
+let _chatTgPendingTimers  = {};
+let _tgQueue              = [];   // رسائل تنتظر دورها في العداد
+let _tgActiveMsgId        = null; // الرسالة يلي عم تشتغل العداد حقها هلأ
 let _chatReplyTo          = null;
 let _chatEditingId        = null;
 let _chatLocalHidden      = new Set(JSON.parse(localStorage.getItem('_chatLocalHidden') || '[]'));
@@ -12033,6 +13077,23 @@ window._chatActivityText = function(userId) {
     return `منذ ${Math.floor(diff/86400000)} يوم`;
 };
 
+/* ─── Inactivity lock ────────────────────────────────────── */
+function _resetInactivityTimer() {
+    if (_chatInactivityTimer) clearTimeout(_chatInactivityTimer);
+    if (!_chatFeatureEnabled) return;
+    _chatInactivityTimer = setTimeout(_lockChatInactivity, CHAT_INACTIVITY);
+}
+function _lockChatInactivity() {
+    if (!_chatFeatureEnabled) return;
+    const cb = document.getElementById('chatFeatureToggle');
+    if (cb) cb.checked = false;
+    _disableChatFeature();
+    notify('أُغلقت الدردشة تلقائياً بعد 5 دقائق من عدم النشاط', 'info');
+}
+function _initActivityTracking() {
+    ['mousemove','keydown','click','touchstart'].forEach(ev =>
+        document.addEventListener(ev, _resetInactivityTimer, { passive: true }));
+}
 
 /* ─── Helpers ────────────────────────────────────────────── */
 function _chatEffTs(msg) {
@@ -12553,6 +13614,12 @@ function _chatMarkRead() {
     _chatLastReadMs=Math.max(Date.now(), _latestEff);
     localStorage.setItem('_chatLastRead_'+currentUser.id,_chatLastReadMs);
     fbDocRef.collection('teamChatReads').doc(currentUser.id).set({userId:currentUser.id,username:currentUser.username,role:currentUser.role,lastReadMs:_chatLastReadMs,ts:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(()=>{});
+    // لا نلغي عداد TG للرسائل التي أرسلها المستخدم نفسه —
+    // قراءة المرسِل لرسالته لا تُلغي إشعار التلغرام، فقط قراءة شخص آخر تُلغيه
+    Object.keys(_chatTgPendingTimers).forEach(id=>{
+        const msg=_chatMsgMap.get(id);
+        if(!msg||msg.userId!==currentUser.id) _tgCancelCountdown(id);
+    });
     _updateChatBadge(0);
 }
 function _initChatReadsListener() {
@@ -12562,6 +13629,8 @@ function _initChatReadsListener() {
             if(ch.type==='removed') delete _chatReads[ch.doc.id];
             else _chatReads[ch.doc.id]={...ch.doc.data()};
         });
+        // إذا قرأ أحدٌ رسالة لها عدّاد تلجرام شغّال → اقطع العدّاد فوراً وألغِ الإرسال
+        _tgCheckReadsCancel();
         if(_chatIsOpen){
             // التقط حالة "ملاصق للأسفل تماماً" قبل إعادة الرسم
             const atBottom = _chatAtBottom(12);
@@ -12744,7 +13813,288 @@ function _chatTypingPreviewHide() {
     if(pv) pv.style.display='none';
 }
 
+/* ─── Telegram (send-only) ───────────────────────────────── */
+function _initTgPrefsListener() {
+    if(_tgPrefsListener||!db||!fbDocRef) return;
+    _tgPrefsListener=fbDocRef.collection('teamChatTgPrefs').onSnapshot(snap=>{
+        _tgRecipients={};
+        snap.forEach(d=>{ _tgRecipients[d.id]={...d.data()}; });
+        if(currentUser&&_tgRecipients[currentUser.id]){
+            const p=_tgRecipients[currentUser.id];
+            _tgMyPrefs={enabled:!!p.enabled,showContent:!!p.showContent};
+            _syncTgUI();
+        }
+    },()=>{});
+}
+function _syncTgUI() {
+    const toggle=document.getElementById('tgNotifToggle');
+    const opts=document.getElementById('tgNotifOptions');
+    const contentToggle=document.getElementById('tgShowContentToggle');
+    if(toggle) toggle.checked=_tgMyPrefs.enabled;
+    if(opts) opts.style.display=_tgMyPrefs.enabled?'block':'none';
+    if(contentToggle) contentToggle.checked=_tgMyPrefs.showContent;
+}
+window.toggleTelegramNotif = function() {
+    const toggle=document.getElementById('tgNotifToggle');
+    if(!toggle||!currentUser||!db||!fbDocRef) return;
+    _tgMyPrefs.enabled=toggle.checked;
+    fbDocRef.collection('teamChatTgPrefs').doc(currentUser.id).set({userId:currentUser.id,username:currentUser.username,role:currentUser.role,enabled:_tgMyPrefs.enabled,showContent:_tgMyPrefs.showContent},{merge:true}).catch(()=>{});
+    const opts=document.getElementById('tgNotifOptions');
+    if(opts) opts.style.display=_tgMyPrefs.enabled?'block':'none';
+    notify(_tgMyPrefs.enabled ? 'تم تفعيل إشعارات تيليغرام' : 'تم إيقاف إشعارات تيليغرام');
+};
+window.toggleTelegramContent = function() {
+    const toggle=document.getElementById('tgShowContentToggle');
+    if(!toggle||!currentUser||!db||!fbDocRef) return;
+    _tgMyPrefs.showContent=toggle.checked;
+    fbDocRef.collection('teamChatTgPrefs').doc(currentUser.id).set({userId:currentUser.id,username:currentUser.username,role:currentUser.role,enabled:_tgMyPrefs.enabled,showContent:_tgMyPrefs.showContent},{merge:true}).catch(()=>{});
+    notify(_tgMyPrefs.showContent?'سيظهر نص الرسالة في الإشعار':'سيُخفى نص الرسالة من الإشعار');
+};
+window.sendTelegramTest = async function() {
+    const status=document.getElementById('tgStatusLine');
+    if(status) status.innerHTML='<i class="fas fa-spinner fa-spin"></i> جاري الإرسال…';
+    try {
+        const r=await fetch(`${TG_API}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_FIXED_CHAT_ID,text:'<b>اختبار ناجح!</b>\nإشعارات دردشة الفريق تعمل بشكل صحيح.',parse_mode:'HTML'})});
+        const d=await r.json();
+        if(status) status.innerHTML=d.ok?'<i class="fas fa-check-circle" style="color:var(--success);"></i> تم الإرسال بنجاح':'<i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> خطأ: '+(d.description||'غير معروف');
+    } catch(e){if(status)status.innerHTML='<i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> خطأ في الاتصال بالتيليغرام';}
+};
+async function _tgSendNotification(msgObj) {
+    const senderPrefs=_tgRecipients[msgObj.userId]||(msgObj.userId===currentUser?.id?_tgMyPrefs:null);
+    if(!senderPrefs||!senderPrefs.enabled) return;
+    const safeName=(msgObj.username||'مجهول').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const roleLabel={admin:'أدمن',employee:'موظف',viewer_plus:'مشاهد+'}[msgObj.role]||'مشاهد';
+    const time=new Date().toLocaleString('ar',{hour:'2-digit',minute:'2-digit',hour12:true});
+    let text=`<b>رسالة جديدة — دردشة الفريق</b>\n\n<b>المرسِل:</b> ${safeName} (${roleLabel})`;
+    if(senderPrefs.showContent && msgObj.text){
+        const preview=msgObj.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').slice(0,300);
+        text+=`\n<b>الرسالة:</b> <i>${preview}</i>`;
+    }
+    text+=`\n<b>الوقت:</b> ${time}`;
+    try {
+        await fetch(`${TG_API}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_FIXED_CHAT_ID,text,parse_mode:'HTML'})});
+    } catch(e){}
+}
+/* ─────────────────────────────────────────────────────────────
+   TG Countdown — Overlay مركزي + قائمة انتظار
+   ───────────────────────────────────────────────────────────── */
+const _TG_R  = 32;                           // نصف قطر الدائرة
+const _TG_C  = +(2 * Math.PI * _TG_R).toFixed(2); // ≈ 201.06
 
+/* إنشاء overlay مرة واحدة فقط */
+function _tgEnsureOverlay() {
+    if (document.getElementById('tgCountdownOverlay')) return;
+    const el = document.createElement('div');
+    el.id = 'tgCountdownOverlay';
+    el.innerHTML =
+        `<div id="tgCountdownRingWrap">` +
+            `<svg width="96" height="96" viewBox="0 0 80 80">` +
+                `<circle cx="40" cy="40" r="${_TG_R}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="5.5"/>` +
+                `<circle id="tgRingProg" cx="40" cy="40" r="${_TG_R}" fill="none" stroke="#229ED9" stroke-width="5.5"` +
+                    ` stroke-dasharray="${_TG_C}" stroke-dashoffset="0" stroke-linecap="round"` +
+                    ` style="transition:stroke-dashoffset 0.92s linear;"/>` +
+            `</svg>` +
+            `<span id="tgCountdownNum">5</span>` +
+        `</div>` +
+        `<div id="tgCountdownLbl">سيُرسل للتيليغرام خلال 5…</div>` +
+        `<div id="tgCountdownQueueLbl"></div>`;
+    document.body.appendChild(el);
+}
+
+/* تحديث شكل الـ overlay */
+function _tgOverlayUpdate(remaining) {
+    const numEl   = document.getElementById('tgCountdownNum');
+    const lblEl   = document.getElementById('tgCountdownLbl');
+    const ringEl  = document.getElementById('tgRingProg');
+    const queueEl = document.getElementById('tgCountdownQueueLbl');
+    const offset  = (_TG_C * (1 - remaining / 5)).toFixed(2);
+
+    if (numEl)  numEl.textContent  = remaining;
+    if (lblEl)  lblEl.textContent  = `سيُرسل للتيليغرام خلال ${remaining}…`;
+    if (ringEl) ringEl.style.strokeDashoffset = offset;
+
+    const q = _tgQueue.length;
+    if (queueEl) {
+        queueEl.style.display = q > 0 ? 'block' : 'none';
+        queueEl.textContent   = q > 0 ? `في الطابور: ${q} رسالة` : '';
+    }
+}
+
+function _tgOverlayShow(remaining) {
+    _tgEnsureOverlay();
+    const ov = document.getElementById('tgCountdownOverlay');
+    if (!ov) return;
+    // إعادة تشغيل أنيميشن الظهور عند كل رسالة جديدة
+    ov.style.animation = 'none';
+    // eslint-disable-next-line no-unused-expressions
+    ov.offsetWidth; // reflow
+    ov.style.animation = '';
+    ov.style.display = 'flex';
+    _tgOverlayUpdate(remaining);
+}
+
+function _tgOverlayHide() {
+    const ov = document.getElementById('tgCountdownOverlay');
+    if (ov) ov.style.display = 'none';
+}
+
+/* مرحلة صامتة: ثانيتان بلا عدّاد ظاهر قبل بدء العدّ. إن قُرئت الرسالة خلالها → إلغاء بلا تلجرام */
+function _tgRunCountdown(msgId) {
+    let silent = 2;
+    const silentTimer = setInterval(() => {
+        const cur = _chatMsgMap.get(msgId);
+        if (cur && _chatReadersOf(cur).length) {
+            clearInterval(silentTimer);
+            delete _chatTgPendingTimers[msgId];
+            _tgActiveMsgId = null;
+            _tgNextInQueue();
+            return;
+        }
+        silent--;
+        if (silent <= 0) {
+            clearInterval(silentTimer);
+            _tgRunVisibleCountdown(msgId); // ابدأ العدّ المرئي (5 ثوانٍ)
+        }
+    }, 1000);
+    _chatTgPendingTimers[msgId] = silentTimer;
+}
+
+/* العدّ المرئي — 5 ثوانٍ، يبقى ظاهراً بلا وميض، وينقطع فوراً إذا قرأ أحدٌ الرسالة */
+function _tgRunVisibleCountdown(msgId) {
+    _tgEnsureOverlay();
+    let remaining = 5;
+    // أظهر العداد مرة واحدة فقط في البداية (أنيميشن الدخول يعمل مرة واحدة، لا كل ثانية)
+    _tgOverlayShow(remaining);
+
+    const timer = setInterval(async () => {
+        // إذا قرأ أيُّ شخصٍ الرسالة أثناء العدّ → اقطع العدّاد وألغِ الإرسال فوراً
+        const cur = _chatMsgMap.get(msgId);
+        if (cur && _chatReadersOf(cur).length) {
+            clearInterval(timer);
+            delete _chatTgPendingTimers[msgId];
+            _tgActiveMsgId = null;
+            _tgOverlayHide();
+            _tgNextInQueue();
+            return;
+        }
+
+        remaining--;
+        if (remaining >= 1) {
+            // تحديث الرقم والقوس فقط — بدون إعادة تشغيل الأنيميشن (يبقى ظاهراً ثابتاً)
+            _tgOverlayUpdate(remaining);
+        } else {
+            clearInterval(timer);
+            delete _chatTgPendingTimers[msgId];
+            _tgActiveMsgId = null;
+            _tgOverlayHide();
+
+            const msg = _chatMsgMap.get(msgId);
+            if (msg) {
+                const readers = _chatReadersOf(msg);
+                if (!readers.length) await _tgSendNotification(msg);
+            }
+
+            _tgNextInQueue(); // ابدأ التالي بالطابور
+        }
+    }, 1000);
+
+    _chatTgPendingTimers[msgId] = timer;
+}
+
+/* ألغِ عدّاد أي رسالة (نشطة أو في الطابور) قرأها شخصٌ آخر — يُستدعى من مستمع القراءات */
+function _tgCheckReadsCancel() {
+    const ids = [];
+    if (_tgActiveMsgId) ids.push(_tgActiveMsgId);
+    _tgQueue.forEach(id => ids.push(id));
+    ids.forEach(id => {
+        const m = _chatMsgMap.get(id);
+        if (m && _chatReadersOf(m).length) _tgCancelCountdown(id);
+    });
+}
+
+/* معالجة الطابور */
+function _tgNextInQueue() {
+    if (_tgQueue.length === 0) { _tgOverlayHide(); _tgActiveMsgId = null; return; }
+    _tgActiveMsgId = _tgQueue.shift();
+    _tgRunCountdown(_tgActiveMsgId);
+}
+
+function _tgStartCountdown(msgId) {
+    if (!_tgMyPrefs.enabled) return;
+    if (_chatTgPendingTimers[msgId] || _tgActiveMsgId === msgId || _tgQueue.includes(msgId)) return;
+    _tgQueue.push(msgId);
+    if (!_tgActiveMsgId) {
+        _tgNextInQueue(); // ابدأ فوراً لو ما في شي شغال
+    } else {
+        // حدّث عرض الطابور فقط
+        const queueEl = document.getElementById('tgCountdownQueueLbl');
+        if (queueEl) {
+            queueEl.style.display = 'block';
+            queueEl.textContent   = `في الطابور: ${_tgQueue.length} رسالة`;
+        }
+    }
+}
+
+function _tgCancelCountdown(msgId) {
+    // إلغاء من الطابور إذا كانت لسا ما بدأت
+    const qi = _tgQueue.indexOf(msgId);
+    if (qi !== -1) {
+        _tgQueue.splice(qi, 1);
+        const queueEl = document.getElementById('tgCountdownQueueLbl');
+        if (queueEl) {
+            queueEl.style.display = _tgQueue.length > 0 ? 'block' : 'none';
+            queueEl.textContent   = _tgQueue.length > 0 ? `في الطابور: ${_tgQueue.length} رسالة` : '';
+        }
+        return;
+    }
+    // إلغاء العداد الشغال حالياً
+    if (_tgActiveMsgId === msgId || _chatTgPendingTimers[msgId]) {
+        if (_chatTgPendingTimers[msgId]) { clearInterval(_chatTgPendingTimers[msgId]); delete _chatTgPendingTimers[msgId]; }
+        _tgActiveMsgId = null;
+        _tgOverlayHide();
+        _tgNextInQueue(); // ابدأ التالي
+    }
+}
+
+/* ─── System settings: hide chat for all ─────────────────── */
+function _initSystemSettingsListener() {
+    if(_chatSystemListener||!db||!fbDocRef) return;
+    _chatSystemListener=fbDocRef.collection('systemSettings').doc('chat').onSnapshot(snap=>{
+        const d=snap.exists?(snap.data()||{}):{};
+        _chatHiddenForAll=!!d.hiddenForAll;
+        // نخزّن الحالة في localStorage لتطبيقها فوراً عند إعادة التحميل قبل وصول snapshot
+        localStorage.setItem('_chatHiddenForAll', _chatHiddenForAll?'1':'0');
+        const adminToggle=document.getElementById('chatHideForAllToggle');
+        if(adminToggle) adminToggle.checked=_chatHiddenForAll;
+        // Disable the "show chat" feature toggle for everyone
+        const featRow=document.getElementById('chat-feature-row');
+        const featToggle=document.getElementById('chatFeatureToggle');
+        if(_chatHiddenForAll){
+            if(_chatFeatureEnabled){ if(featToggle)featToggle.checked=false; _disableChatFeature(); }
+            if(featToggle) featToggle.disabled=true;
+            const lockNote=document.getElementById('chatHiddenLockNote');
+            if(lockNote) lockNote.style.display='block';
+        } else {
+            if(featToggle) featToggle.disabled=false;
+            const lockNote=document.getElementById('chatHiddenLockNote');
+            if(lockNote) lockNote.style.display='none';
+        }
+    },()=>{});
+}
+window.toggleHideChatForAll = async function() {
+    if(!currentUser||currentUser.role!=='admin'||!db||!fbDocRef) return;
+    const toggle=document.getElementById('chatHideForAllToggle');
+    const want=toggle?toggle.checked:false;
+    if(want){
+        const ok=await showConfirm('إخفاء الدردشة للكل','سيتم إيقاف خيار «دردشة الفريق» عند جميع المستخدمين (بمن فيهم الأدمن) وإخفاء الخانة فوراً. متابعة؟','إخفاء للكل','إلغاء','<i class="fas fa-eye-slash"></i>');
+        if(!ok){if(toggle)toggle.checked=false;return;}
+    }
+    try {
+        await fbDocRef.collection('systemSettings').doc('chat').set({hiddenForAll:want,changedAt:firebase.firestore.FieldValue.serverTimestamp(),changedBy:currentUser.username},{merge:true});
+        notify(want?'تم إخفاء الدردشة عن جميع المستخدمين':'تم إعادة تفعيل خيار الدردشة للمستخدمين');
+        try{logAction(want?'إخفاء خانة الدردشة للكل':'إظهار خانة الدردشة للكل','danger');}catch(e){}
+    } catch(e){ notify('خطأ: '+e.message,'error'); if(toggle)toggle.checked=!want; }
+};
 
 /* ─── Main chat listener ─────────────────────────────────── */
 function _initChatListener() {
@@ -12781,6 +14131,7 @@ function _initChatListener() {
                         // my own message landed → clear from outbox, start TG countdown
                         _chatOutbox=_chatOutbox.filter(m=>m._localId!==d.id);
                         _chatSaveOutbox();
+                        if(_tgMyPrefs.enabled) _tgStartCountdown(d.id);
                     }
                 }
             });
@@ -13001,7 +14352,7 @@ window.chatAutoResize = chatAutoResize;
 document.addEventListener('visibilitychange',()=>{
     if(!document.hidden){
         if(_chatIsOpen&&_chatNearBottom) _chatMarkRead();
-        _chatUpdateTitle(); _chatUpdatePresence();
+        _chatUpdateTitle(); _chatUpdatePresence(); _resetInactivityTimer();
     }
 });
 window.addEventListener('beforeunload',()=>{ _chatSetOffline(); });
@@ -13010,10 +14361,13 @@ window.addEventListener('beforeunload',()=>{ _chatSetOffline(); });
 function _enableChatFeature() {
     _chatFeatureEnabled=true;
     const bt=document.getElementById('btnTeamChat'); if(bt) bt.style.display='';
+    const tg=document.getElementById('tg-notif-setting'); if(tg) tg.style.display='';
+    const ex=document.getElementById('chat-extra-settings'); if(ex) ex.style.display='';
     if(!isDemoMode&&db&&fbDocRef){
         _initChatListener(); _initChatReadsListener(); _initChatTypingListener();
-        _initPresenceListener();
+        _initPresenceListener(); _initTgPrefsListener();
     }
+    _resetInactivityTimer();
 }
 function _disableChatFeature() {
     _chatFeatureEnabled=false;
@@ -13045,10 +14399,14 @@ function _startChatOnLogin(){
         _chatLoadOutbox();
         _startPresenceHeartbeat();
         _initPresenceListener();
+        _initTgPrefsListener();
         _chatFlushOutbox();
     }
-    const bt=document.getElementById('btnTeamChat'); if(bt) bt.style.display='';
+    // الدردشة مفعّلة دائماً لجميع المستخدمين (لا توجد أزرار إظهار/إخفاء)
+    const soundBtn=document.getElementById('chatSoundMuteBtn');
+    if(soundBtn) soundBtn.innerHTML=_chatSoundMuted?'<i class="fas fa-volume-mute"></i> صوت الإشعارات: مكتوم':'<i class="fas fa-volume-up"></i> كتم صوت الإشعارات';
     _enableChatFeature();
+    _initActivityTracking();
 }
 window.onload = init;
 
@@ -13067,6 +14425,7 @@ window.onload = init;
     let _finApplying = false;  // لمنع تكرار المعالجة
 
     const _LS_KEY    = 'finPrivacyEnabled';
+    const _LS_STATE_KEY = 'finPrivacyHidden'; // '1' = الأرقام مخفية، '0' = ظاهرة (يُحفظ ليُستعاد بعد تحديث الصفحة)
     const _FIN_MASK  = '****';
     const _CUR_RE    = /[₪$£]/;
     const _NUM_RE    = /[+-]?\d[\d.,]*/g;
@@ -13135,6 +14494,8 @@ window.onload = init;
 
     function toggleFinancialPrivacy() {
         _finPrivacy = !_finPrivacy;
+        // حفظ آخر حالة (إخفاء/إظهار) ليُستعاد عند تحديث الصفحة
+        try { localStorage.setItem(_LS_STATE_KEY, _finPrivacy ? '1' : '0'); } catch (e) {}
         _applyAll();
         _updateBtn(document.getElementById('finPrivacyToggle'));
     }
@@ -13173,10 +14534,18 @@ window.onload = init;
     }
 
     // تفعيل الميزة كاملةً (إنشاء الزر + بدء المراقبة)
-    function _enableFeature() {
+    // restore=true (عند تحميل الصفحة): يستعيد آخر حالة إخفاء/إظهار محفوظة
+    // restore=false (عند التفعيل من الإعدادات أول مرة): الأرقام ظاهرة افتراضياً
+    function _enableFeature(restore) {
         _finEnabled = true;
-        _finPrivacy = false;  // عند كل تفعيل: الأرقام ظاهرة (المستخدم يختار الإخفاء بنفسه)
+        if (restore) {
+            _finPrivacy = (localStorage.getItem(_LS_STATE_KEY) === '1'); // استعادة آخر حالة
+        } else {
+            _finPrivacy = false; // تفعيل جديد: الأرقام ظاهرة (المستخدم يختار الإخفاء بنفسه)
+            try { localStorage.setItem(_LS_STATE_KEY, '0'); } catch (e) {}
+        }
         _createBtn();
+        _updateBtn(document.getElementById('finPrivacyToggle'));
         _applyAll();
         _obs.observe(document.body, { childList: true, subtree: true, characterData: true });
     }
@@ -13195,7 +14564,7 @@ window.onload = init;
         const cb = document.getElementById('finPrivacyFeatureToggle');
         const enabled = cb ? cb.checked : false;
         localStorage.setItem(_LS_KEY, enabled ? '1' : '0');
-        if (enabled) _enableFeature();
+        if (enabled) _enableFeature(false); // تفعيل من الإعدادات: ابدأ بإظهار الأرقام
         else _disableFeature();
     };
 
@@ -13211,7 +14580,7 @@ window.onload = init;
         const cb = document.getElementById('finPrivacyFeatureToggle');
         if (cb) cb.checked = _finEnabled;
 
-        if (_finEnabled) _enableFeature();
+        if (_finEnabled) _enableFeature(true); // عند تحميل الصفحة: استعِد آخر حالة كان عليها المستخدم
         // إذا غير مفعّل: لا نفعل شيئاً — الأرقام ظاهرة بشكل طبيعي
     }
 
